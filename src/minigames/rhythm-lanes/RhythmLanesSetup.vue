@@ -13,8 +13,8 @@ const emit = defineEmits<{
 }>();
 
 const defaultPool = ['A', 'S', 'D', 'F', 'J', 'K', 'L', 'H'];
-const keyCount = ref(4);
 const keys = ref(['A', 'S', 'K', 'L']);
+const draggedIndex = ref<number | null>(null);
 
 const hasDuplicateKeys = computed(() => {
   const uniqueKeys = new Set(keys.value);
@@ -22,16 +22,53 @@ const hasDuplicateKeys = computed(() => {
   return uniqueKeys.size !== keys.value.length;
 });
 
-const updateKeyCount = () => {
-  const nextCount = Math.max(1, Math.min(8, keyCount.value));
-  keyCount.value = nextCount;
+const canAddLane = computed(() => keys.value.length < Math.min(8, keyOptions.length));
+const canRemoveLane = computed(() => keys.value.length > 1);
 
-  if (keys.value.length > nextCount) {
-    keys.value = keys.value.slice(0, nextCount);
+const getNextKey = () => {
+  const usedKeys = new Set(keys.value);
+  const nextDefault = defaultPool.find((key) => !usedKeys.has(key));
+
+  if (nextDefault) {
+    return nextDefault;
+  }
+
+  return keyOptions.find((key) => !usedKeys.has(key)) ?? keyOptions[0];
+};
+
+const addLane = (insertIndex: number) => {
+  if (!canAddLane.value) {
     return;
   }
 
-  keys.value = [...keys.value, ...defaultPool.slice(keys.value.length, nextCount)];
+  keys.value.splice(insertIndex, 0, getNextKey());
+};
+
+const removeLane = (index: number) => {
+  if (!canRemoveLane.value) {
+    return;
+  }
+
+  keys.value.splice(index, 1);
+};
+
+const onDragStart = (index: number, event: DragEvent) => {
+  draggedIndex.value = index;
+  event.dataTransfer?.setData('text/plain', String(index));
+  event.dataTransfer?.setDragImage(event.currentTarget as Element, 48, 48);
+};
+
+const onDrop = (targetIndex: number) => {
+  if (draggedIndex.value === null || draggedIndex.value === targetIndex) {
+    draggedIndex.value = null;
+    return;
+  }
+
+  const nextKeys = [...keys.value];
+  const [movedKey] = nextKeys.splice(draggedIndex.value, 1);
+  nextKeys.splice(targetIndex, 0, movedKey);
+  keys.value = nextKeys;
+  draggedIndex.value = null;
 };
 
 const start = () => {
@@ -53,22 +90,60 @@ const start = () => {
     <div class="setup-row">
       <div>
         <h2>Instrument lanes</h2>
-        <p>Set how many keys you want, then assign their left-to-right order.</p>
+        <p>Drag keys to set lane order. Add lanes beside any key, or remove a lane from its corner.</p>
       </div>
-
-      <label class="count-field">
-        <span>Keys</span>
-        <input v-model.number="keyCount" type="number" min="1" max="8" @input="updateKeyCount" />
-      </label>
     </div>
 
-    <div class="lane-order">
-      <label v-for="(_, index) in keys" :key="index">
-        <span>Lane {{ index + 1 }}</span>
-        <select v-model="keys[index]">
-          <option v-for="key in keyOptions" :key="key" :value="key">{{ key }}</option>
-        </select>
-      </label>
+    <div class="lane-builder" aria-label="Rhythm lane order">
+      <button
+        type="button"
+        class="lane-add-button"
+        :disabled="!canAddLane"
+        aria-label="Add lane at start"
+        @click="addLane(0)"
+      >
+        +
+      </button>
+
+      <template v-for="(key, index) in keys" :key="`${key}-${index}`">
+        <article
+          class="lane-tile"
+          :class="{ dragging: draggedIndex === index }"
+          draggable="true"
+          @dragstart="onDragStart(index, $event)"
+          @dragend="draggedIndex = null"
+          @dragover.prevent
+          @drop="onDrop(index)"
+        >
+          <button
+            type="button"
+            class="lane-remove-button"
+            :disabled="!canRemoveLane"
+            :aria-label="`Remove ${key} lane`"
+            @click="removeLane(index)"
+          >
+            -
+          </button>
+
+          <label class="lane-key-picker">
+            <span class="sr-only">Key for lane {{ index + 1 }}</span>
+            <select v-model="keys[index]" @mousedown.stop @dragstart.stop>
+              <option v-for="option in keyOptions" :key="option" :value="option">{{ option }}</option>
+            </select>
+          </label>
+          <span>Lane {{ index + 1 }}</span>
+        </article>
+
+        <button
+          type="button"
+          class="lane-add-button"
+          :disabled="!canAddLane"
+          :aria-label="`Add lane after ${key}`"
+          @click="addLane(index + 1)"
+        >
+          +
+        </button>
+      </template>
     </div>
 
     <p v-if="hasDuplicateKeys" class="setup-error">

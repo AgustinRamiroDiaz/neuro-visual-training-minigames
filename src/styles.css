@@ -488,6 +488,104 @@ select {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.lane-builder {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lane-tile {
+  background: #20232a;
+  border: 1px solid #20232a;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: grab;
+  display: grid;
+  gap: 8px;
+  min-height: 154px;
+  padding: 18px 12px 12px;
+  position: relative;
+  text-align: center;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+  width: 112px;
+}
+
+.lane-tile.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.lane-tile > span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.lane-key-picker {
+  display: block;
+}
+
+.lane-key-picker select {
+  background: #5b7cfa;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 2.1rem;
+  font-weight: 900;
+  height: 64px;
+  min-height: 64px;
+  padding: 0 24px 0 10px;
+  text-align: center;
+  text-align-last: center;
+}
+
+.lane-add-button,
+.lane-remove-button {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-weight: 900;
+  justify-content: center;
+  line-height: 1;
+}
+
+.lane-add-button {
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  color: #3b414d;
+  height: 34px;
+  width: 34px;
+}
+
+.lane-remove-button {
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  color: #b42335;
+  height: 26px;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  width: 26px;
+}
+
+.lane-add-button:disabled,
+.lane-remove-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.sr-only {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
 .field-grid label,
 .lane-order label,
 .count-field {
@@ -598,6 +696,16 @@ select {
   .field-grid,
   .lane-order {
     grid-template-columns: 1fr;
+  }
+
+  .lane-builder {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: 34px 1fr 34px;
+  }
+
+  .lane-tile {
+    width: 100%;
   }
 
   .setup-panel {

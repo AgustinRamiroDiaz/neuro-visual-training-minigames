@@ -42,7 +42,7 @@ Dual Lane Drive and Rhythm Lanes have their own Phaser scenes. Future minigames 
 
 Dual Lane Drive supports configurable left-car and right-car keys, with presets for `A + D`, `Left + Right`, and `F + J`.
 
-Rhythm Lanes supports a configurable number of lanes and a configurable left-to-right key order.
+Rhythm Lanes supports a configurable number of lanes and a configurable left-to-right key order. Its setup UI should represent each lane as a draggable key tile, with plus controls for inserting lanes and remove controls on each tile.
 
 ## Architecture
 
