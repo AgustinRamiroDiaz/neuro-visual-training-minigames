@@ -20,9 +20,9 @@ interface Obstacle {
 }
 
 export class DualLaneDriveScene extends Phaser.Scene {
-  private readonly lanes: Record<Side, number[]> = {
-    left: [250, 350],
-    right: [550, 650],
+  private lanes: Record<Side, number[]> = {
+    left: [],
+    right: [],
   };
 
   private cars!: Record<Side, CarState>;
@@ -61,6 +61,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#f6f3ee');
+    this.lanes = this.createLanePositions();
     this.createRoad();
     this.createHud();
 
@@ -71,10 +72,10 @@ export class DualLaneDriveScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
 
-    this.createControlButton(250, 508, 'Left car', this.settings.leftKey, () =>
+    this.createControlButton(this.lanes.left[0], this.getControlY(), 'Left car', this.settings.leftKey, () =>
       this.switchLane('left'),
     );
-    this.createControlButton(650, 508, 'Right car', this.settings.rightKey, () =>
+    this.createControlButton(this.lanes.right[1], this.getControlY(), 'Right car', this.settings.rightKey, () =>
       this.switchLane('right'),
     );
 
@@ -92,7 +93,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
     this.obstacles.forEach((obstacle) => {
       obstacle.shape.y += distance;
 
-      if (!obstacle.scored && obstacle.shape.y > 455) {
+      if (!obstacle.scored && obstacle.shape.y > this.getCarY()) {
         obstacle.scored = true;
         this.addScore();
       }
@@ -103,7 +104,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
     });
 
     this.obstacles = this.obstacles.filter((obstacle) => {
-      if (obstacle.shape.y < 625) {
+      if (obstacle.shape.y < this.scale.height + 80) {
         return true;
       }
 
@@ -113,16 +114,21 @@ export class DualLaneDriveScene extends Phaser.Scene {
   }
 
   private createRoad() {
-    this.add.rectangle(450, 280, 560, 560, 0x222831, 1);
-    this.add.rectangle(450, 280, 16, 560, 0xf6f3ee, 1);
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+    const roadWidth = this.getRoadWidth();
+    const roadHeight = this.scale.height;
 
-    [300, 600].forEach((x) => {
-      for (let y = 20; y < 560; y += 54) {
+    this.add.rectangle(centerX, centerY, roadWidth, roadHeight, 0x222831, 1);
+    this.add.rectangle(centerX, centerY, 16, roadHeight, 0xf6f3ee, 1);
+
+    [centerX - roadWidth / 4, centerX + roadWidth / 4].forEach((x) => {
+      for (let y = 20; y < this.scale.height; y += 54) {
         this.add.rectangle(x, y, 8, 28, 0xf6f3ee, 0.82);
       }
     });
 
-    this.add.rectangle(450, 74, 560, 92, 0x20232a, 0.2);
+    this.add.rectangle(centerX, 74, roadWidth, 92, 0x20232a, 0.2);
   }
 
   private createHud() {
@@ -143,7 +149,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     this.scoreText = this.add
-      .text(820, 28, '0', {
+      .text(this.scale.width - 40, 28, '0', {
         fontFamily: 'Arial, sans-serif',
         fontSize: '38px',
         color: '#20232a',
@@ -151,7 +157,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
       .setOrigin(1, 0);
 
     this.rateText = this.add
-      .text(820, 72, `${this.obstaclesPerMinute} obstacles/min`, {
+      .text(this.scale.width - 40, 72, `${this.obstaclesPerMinute} obstacles/min`, {
         fontFamily: 'Arial, sans-serif',
         fontSize: '15px',
         color: '#5f6673',
@@ -161,7 +167,7 @@ export class DualLaneDriveScene extends Phaser.Scene {
 
   private createCar(side: Side, laneIndex: number, color: number): CarState {
     const x = this.lanes[side][laneIndex];
-    const car = this.add.container(x, 455);
+    const car = this.add.container(x, this.getCarY());
     const shadow = this.add.rectangle(0, 10, 48, 70, 0x000000, 0.18).setOrigin(0.5);
     const body = this.add.rectangle(0, 0, 42, 66, color, 1).setOrigin(0.5);
     const cabin = this.add.rectangle(0, -8, 26, 26, 0xffffff, 0.72).setOrigin(0.5);
@@ -263,6 +269,28 @@ export class DualLaneDriveScene extends Phaser.Scene {
     );
   }
 
+  private createLanePositions(): Record<Side, number[]> {
+    const centerX = this.scale.width / 2;
+    const roadWidth = this.getRoadWidth();
+
+    return {
+      left: [centerX - roadWidth * 0.32, centerX - roadWidth * 0.14],
+      right: [centerX + roadWidth * 0.14, centerX + roadWidth * 0.32],
+    };
+  }
+
+  private getRoadWidth() {
+    return Math.min(760, this.scale.width * 0.66);
+  }
+
+  private getCarY() {
+    return this.scale.height - 145;
+  }
+
+  private getControlY() {
+    return this.scale.height - 54;
+  }
+
   private addScore() {
     this.score += 1;
     this.obstaclesPerMinute = 30 + Math.floor(this.score / 4) * 6;
@@ -289,8 +317,8 @@ export class DualLaneDriveScene extends Phaser.Scene {
 
     this.statusText = this.add
       .text(
-        450,
-        258,
+        this.scale.width / 2,
+        this.scale.height / 2,
         `Peak pace ${this.obstaclesPerMinute} obstacles/min\nCleared ${this.score} obstacles\nPress Enter or Space to restart`,
         {
         align: 'center',

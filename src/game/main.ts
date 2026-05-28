@@ -12,8 +12,8 @@ export function createGame(
 ) {
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 900,
-    height: 560,
+    width: 1280,
+    height: 760,
     parent,
     backgroundColor: '#f6f3ee',
     scene: [DualLaneDriveScene, RhythmLanesScene, TrainingScene],

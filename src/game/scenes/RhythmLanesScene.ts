@@ -16,7 +16,6 @@ interface RhythmNote {
 }
 
 export class RhythmLanesScene extends Phaser.Scene {
-  private readonly targetY = 438;
   private readonly hitWindow = 44;
   private lanes: RhythmLane[] = [];
   private minigame?: Minigame;
@@ -48,7 +47,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       data.gameSettings?.sceneKey === 'RhythmLanesScene'
         ? data.gameSettings.settings
         : { keys: ['A', 'S', 'K', 'L'] };
-    this.lanes = this.createLanes(this.settings.keys);
+    this.lanes = [];
     this.notes = [];
     this.score = 0;
     this.streak = 0;
@@ -61,6 +60,7 @@ export class RhythmLanesScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#f6f3ee');
+    this.lanes = this.createLanes(this.settings.keys);
     this.createStage();
     this.createHud();
     this.createControls();
@@ -78,20 +78,35 @@ export class RhythmLanesScene extends Phaser.Scene {
   }
 
   private createStage() {
-    this.add.rectangle(450, 280, 540, 560, 0x20232a, 1);
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+    const stageWidth = this.getStageWidth();
+    const stageHeight = this.scale.height;
+    const targetY = this.getTargetY();
+
+    this.add.rectangle(centerX, centerY, stageWidth, stageHeight, 0x20232a, 1);
 
     this.lanes.forEach((lane, index) => {
       this.add.rectangle(
         lane.x,
-        280,
+        centerY,
         this.getLaneWidth(),
-        560,
+        stageHeight,
         index % 2 === 0 ? 0x27303b : 0x222a34,
         1,
       );
-      this.add.line(lane.x - this.getLaneWidth() / 2, 280, 0, -280, 0, 280, 0xf6f3ee, 0.12);
+      this.add.line(
+        lane.x - this.getLaneWidth() / 2,
+        centerY,
+        0,
+        -stageHeight / 2,
+        0,
+        stageHeight / 2,
+        0xf6f3ee,
+        0.12,
+      );
       this.add
-        .text(lane.x, this.targetY + 2, lane.key, {
+        .text(lane.x, targetY + 2, lane.key, {
           fontFamily: 'Arial, sans-serif',
           fontSize: '30px',
           color: '#20232a',
@@ -99,9 +114,9 @@ export class RhythmLanesScene extends Phaser.Scene {
         .setOrigin(0.5);
     });
 
-    this.add.rectangle(450, this.targetY, 540, 74, 0xf6f3ee, 0.96);
-    this.add.rectangle(450, this.targetY, 540, 4, 0x5b7cfa, 1);
-    this.add.rectangle(450, 74, 540, 92, 0xf6f3ee, 0.1);
+    this.add.rectangle(centerX, targetY, stageWidth, 74, 0xf6f3ee, 0.96);
+    this.add.rectangle(centerX, targetY, stageWidth, 4, 0x5b7cfa, 1);
+    this.add.rectangle(centerX, 74, stageWidth, 92, 0xf6f3ee, 0.1);
   }
 
   private createHud() {
@@ -122,7 +137,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     this.scoreText = this.add
-      .text(830, 24, '0', {
+      .text(this.scale.width - 40, 24, '0', {
         fontFamily: 'Arial, sans-serif',
         fontSize: '38px',
         color: '#20232a',
@@ -130,7 +145,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       .setOrigin(1, 0);
 
     this.streakText = this.add
-      .text(830, 70, 'Streak 0', {
+      .text(this.scale.width - 40, 70, 'Streak 0', {
         fontFamily: 'Arial, sans-serif',
         fontSize: '15px',
         color: '#5f6673',
@@ -138,7 +153,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       .setOrigin(1, 0);
 
     this.missesText = this.add
-      .text(830, 94, 'Misses 0/8', {
+      .text(this.scale.width - 40, 94, 'Misses 0/8', {
         fontFamily: 'Arial, sans-serif',
         fontSize: '15px',
         color: '#5f6673',
@@ -146,7 +161,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       .setOrigin(1, 0);
 
     this.paceText = this.add
-      .text(830, 118, `${this.notesPerMinute} notes/min`, {
+      .text(this.scale.width - 40, 118, `${this.notesPerMinute} notes/min`, {
         fontFamily: 'Arial, sans-serif',
         fontSize: '15px',
         color: '#5f6673',
@@ -154,7 +169,7 @@ export class RhythmLanesScene extends Phaser.Scene {
       .setOrigin(1, 0);
 
     this.feedbackText = this.add
-      .text(450, 512, '', {
+      .text(this.scale.width / 2, this.scale.height - 52, '', {
         fontFamily: 'Arial, sans-serif',
         fontSize: '20px',
         color: '#20232a',
@@ -164,14 +179,21 @@ export class RhythmLanesScene extends Phaser.Scene {
 
   private createControls() {
     this.lanes.forEach((lane, index) => {
-      this.createButton(lane.x, 512, lane.key, () => this.tryHit(index));
+      this.createButton(lane.x, this.getControlY(), lane.key, () => this.tryHit(index));
     });
 
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
   }
 
   private createButton(x: number, y: number, label: string, onPress: () => void) {
-    const button = this.add.rectangle(x, y, Math.max(42, Math.min(74, this.getLaneWidth() - 12)), 48, 0xffffff, 1);
+    const button = this.add.rectangle(
+      x,
+      y,
+      Math.max(42, Math.min(74, this.getLaneWidth() - 12)),
+      48,
+      0xffffff,
+      1,
+    );
     button.setStrokeStyle(2, 0xd8dce3, 1);
     button.setInteractive({ useHandCursor: true });
     button.on('pointerdown', onPress);
@@ -205,8 +227,8 @@ export class RhythmLanesScene extends Phaser.Scene {
   }
 
   private createLanes(keys: string[]) {
-    const laneWidth = Math.min(112, 540 / keys.length);
-    const startX = 450 - ((keys.length - 1) * laneWidth) / 2;
+    const laneWidth = this.getLaneWidth(keys.length);
+    const startX = this.scale.width / 2 - ((keys.length - 1) * laneWidth) / 2;
 
     return keys.map((key, index) => ({
       key,
@@ -214,8 +236,20 @@ export class RhythmLanesScene extends Phaser.Scene {
     }));
   }
 
-  private getLaneWidth() {
-    return Math.min(112, 540 / this.lanes.length);
+  private getLaneWidth(laneCount = this.lanes.length) {
+    return Math.min(112, this.getStageWidth() / laneCount);
+  }
+
+  private getStageWidth() {
+    return Math.min(760, this.scale.width * 0.66);
+  }
+
+  private getTargetY() {
+    return this.scale.height - 150;
+  }
+
+  private getControlY() {
+    return this.scale.height - 54;
   }
 
   private updateSpawner(delta: number) {
@@ -233,14 +267,16 @@ export class RhythmLanesScene extends Phaser.Scene {
     this.notes.forEach((note) => {
       note.container.y += distance;
 
-      if (!note.scored && note.container.y > this.targetY + this.hitWindow) {
+      if (!note.scored && note.container.y > this.getTargetY() + this.hitWindow) {
         note.scored = true;
         this.registerMiss('Late');
         note.container.destroy();
       }
     });
 
-    this.notes = this.notes.filter((note) => note.container.active && note.container.y < 620);
+    this.notes = this.notes.filter(
+      (note) => note.container.active && note.container.y < this.scale.height + 80,
+    );
   }
 
   private spawnNote() {
@@ -270,15 +306,15 @@ export class RhythmLanesScene extends Phaser.Scene {
       .filter((note) => !note.scored && note.laneIndex === laneIndex)
       .sort(
         (a, b) =>
-          Math.abs(a.container.y - this.targetY) - Math.abs(b.container.y - this.targetY),
+          Math.abs(a.container.y - this.getTargetY()) - Math.abs(b.container.y - this.getTargetY()),
       )[0];
 
-    if (!nearest || Math.abs(nearest.container.y - this.targetY) > this.hitWindow) {
+    if (!nearest || Math.abs(nearest.container.y - this.getTargetY()) > this.hitWindow) {
       this.registerMiss('Miss');
       return;
     }
 
-    const distanceFromTarget = Math.abs(nearest.container.y - this.targetY);
+    const distanceFromTarget = Math.abs(nearest.container.y - this.getTargetY());
     const quality = distanceFromTarget < 16 ? 'Perfect' : 'Good';
     const points = quality === 'Perfect' ? 120 : 80;
 
@@ -331,8 +367,8 @@ export class RhythmLanesScene extends Phaser.Scene {
 
     this.statusText = this.add
       .text(
-        450,
-        258,
+        this.scale.width / 2,
+        this.scale.height / 2,
         `Score ${this.score}\nPeak pace ${this.notesPerMinute} notes/min\nPress Enter or Space to restart`,
         {
           align: 'center',
