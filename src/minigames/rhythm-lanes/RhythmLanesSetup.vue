@@ -5,8 +5,9 @@ import type { GameSettings, RhythmLanesSettings } from '../../game/settings';
 import type { Minigame } from '../types';
 import { useStoredPresets } from '../../presets/useStoredPresets';
 
-defineProps<{
+const props = defineProps<{
   minigame: Minigame;
+  initialSettings?: GameSettings;
 }>();
 
 const emit = defineEmits<{
@@ -14,7 +15,12 @@ const emit = defineEmits<{
 }>();
 
 const defaultPool = ['A', 'S', 'D', 'F', 'J', 'K', 'L', 'H'];
-const keys = ref(['A', 'S', 'K', 'L']);
+const initialRhythmLanesSettings =
+  props.initialSettings?.sceneKey === 'RhythmLanesScene'
+    ? props.initialSettings.settings
+    : { keys: ['A', 'S', 'K', 'L'] };
+
+const keys = ref([...initialRhythmLanesSettings.keys]);
 const draggedIndex = ref<number | null>(null);
 const presetName = ref('');
 

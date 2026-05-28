@@ -5,16 +5,22 @@ import type { DualLaneDriveSettings, GameSettings } from '../../game/settings';
 import type { Minigame } from '../types';
 import { useStoredPresets } from '../../presets/useStoredPresets';
 
-defineProps<{
+const props = defineProps<{
   minigame: Minigame;
+  initialSettings?: GameSettings;
 }>();
 
 const emit = defineEmits<{
   start: [settings: GameSettings];
 }>();
 
-const leftKey = ref('A');
-const rightKey = ref('D');
+const initialDualLaneSettings =
+  props.initialSettings?.sceneKey === 'DualLaneDriveScene'
+    ? props.initialSettings.settings
+    : { leftKey: 'A', rightKey: 'D' };
+
+const leftKey = ref(initialDualLaneSettings.leftKey);
+const rightKey = ref(initialDualLaneSettings.rightKey);
 const presetName = ref('');
 
 const presets = [

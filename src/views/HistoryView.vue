@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import type { PlayHistoryRecord, PlayMetadataValue } from '../history/playHistory';
+import { useHistoryStore } from '../stores/historyStore';
 
-defineProps<{
-  records: PlayHistoryRecord[];
-}>();
-
-defineEmits<{
-  catalog: [];
-}>();
+const historyStore = useHistoryStore();
 
 const timestampFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
@@ -48,11 +43,11 @@ const formatMetadataValue = (value: PlayMetadataValue): string => {
         <p class="eyebrow">Session History</p>
         <h1>Review completed playthroughs.</h1>
       </div>
-      <button type="button" class="back-button" @click="$emit('catalog')">Catalog</button>
+      <RouterLink class="back-button" to="/">Catalog</RouterLink>
     </header>
 
-    <section v-if="records.length > 0" class="history-list" aria-label="Play history">
-      <article v-for="record in records" :key="record.id" class="history-record">
+    <section v-if="historyStore.records.length > 0" class="history-list" aria-label="Play history">
+      <article v-for="record in historyStore.records" :key="record.id" class="history-record">
         <div>
           <p class="card-meta">{{ formatTimestamp(record.timestamp) }}</p>
           <h2>{{ record.gameName }}</h2>
