@@ -34,8 +34,9 @@ Additional categories should be added only when a game meaningfully trains a dis
 ## Current Minigames
 
 - Dual Lane Drive: control two cars at once, each with two lanes, and switch the correct car away from incoming obstacles.
+- Rhythm Lanes: press matching keys as falling prompts reach the instrument lane.
 
-Dual Lane Drive has its own Phaser scene. Future minigames should be added to the catalog only once they are playable.
+Dual Lane Drive and Rhythm Lanes have their own Phaser scenes. Future minigames should be added to the catalog only once they are playable.
 
 ## Architecture
 

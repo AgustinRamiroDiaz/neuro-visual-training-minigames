@@ -1,4 +1,4 @@
-export type SkillArea = 'Visual Search' | 'Reaction' | 'Tracking' | 'Memory';
+export type SkillArea = 'Visual Search' | 'Reaction' | 'Tracking' | 'Memory' | 'Coordination';
 
 export interface Minigame {
   id: string;
@@ -7,9 +7,9 @@ export interface Minigame {
   skillArea: SkillArea;
   difficulty: 'Starter' | 'Focused' | 'Advanced';
   duration: string;
-  sceneKey: 'DualLaneDriveScene' | 'TrainingScene';
+  sceneKey: 'DualLaneDriveScene' | 'RhythmLanesScene' | 'TrainingScene';
   preview: {
-    pattern: 'targets' | 'pulse' | 'orbit' | 'grid' | 'dual-lane';
+    pattern: 'targets' | 'pulse' | 'orbit' | 'grid' | 'dual-lane' | 'rhythm-lanes';
     accent: string;
   };
 }
@@ -20,6 +20,7 @@ export const skillAreas: Array<'All' | SkillArea> = [
   'Reaction',
   'Tracking',
   'Memory',
+  'Coordination',
 ];
 
 export const minigames: Minigame[] = [
@@ -34,6 +35,19 @@ export const minigames: Minigame[] = [
     preview: {
       pattern: 'dual-lane',
       accent: '#f0b429',
+    },
+  },
+  {
+    id: 'rhythm-lanes',
+    title: 'Rhythm Lanes',
+    summary: 'Press the matching keys as button prompts reach the instrument lane.',
+    skillArea: 'Coordination',
+    difficulty: 'Starter',
+    duration: '2 min',
+    sceneKey: 'RhythmLanesScene',
+    preview: {
+      pattern: 'rhythm-lanes',
+      accent: '#5b7cfa',
     },
   },
 ];

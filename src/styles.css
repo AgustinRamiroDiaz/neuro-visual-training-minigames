@@ -350,6 +350,54 @@ button {
   right: calc(50% - 54px);
 }
 
+.rhythm-lane {
+  background: #20232a;
+  border-radius: 4px;
+  display: block;
+  height: 126px;
+  margin: 0 3px;
+  position: relative;
+  width: 28px;
+}
+
+.rhythm-note {
+  align-items: center;
+  background: var(--accent);
+  border-radius: 5px;
+  color: #ffffff;
+  display: flex;
+  font-size: 0.72rem;
+  font-weight: 800;
+  height: 22px;
+  justify-content: center;
+  left: 3px;
+  position: absolute;
+  top: 18px;
+  width: 22px;
+}
+
+.rhythm-lane:nth-child(2) .rhythm-note {
+  top: 48px;
+}
+
+.rhythm-lane:nth-child(3) .rhythm-note {
+  top: 30px;
+}
+
+.rhythm-lane:nth-child(4) .rhythm-note {
+  top: 68px;
+}
+
+.instrument-line {
+  background: #f6f3ee;
+  bottom: 28px;
+  display: block;
+  height: 4px;
+  left: calc(50% - 68px);
+  position: absolute;
+  width: 136px;
+}
+
 .empty-state {
   color: #5f6673;
   grid-column: 1 / -1;
