@@ -35,6 +35,7 @@ Use `pnpm run build` as the default verification command after code changes.
 - Add new playable minigames through `src/minigames/registry.ts`.
 - Put minigame-specific setup UI beside the minigame under `src/minigames/<game-id>/`.
 - Keep `src/App.vue` generic; do not add per-minigame configuration branches there.
+- Store custom setup presets through `src/presets/presetStore.ts` or `useStoredPresets`; do not call `localStorage` directly from setup components.
 - Prefer one Phaser scene per distinct game once mechanics diverge.
 - Use `src/game/EventBus.ts` for narrow communication from Phaser to Vue, such as scene readiness, score updates, game-over events, or settings changes.
 - Destroy Phaser game instances when leaving play views to avoid duplicate canvases and stale listeners.

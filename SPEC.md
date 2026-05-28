@@ -74,6 +74,8 @@ Each minigame registration must provide:
 
 The dashboard should not contain per-minigame setup forms or scene-specific conditionals.
 
+Setup screens may allow users to save custom presets. Presets should go through the `PresetStore` interface in `src/presets/presetStore.ts`; the current implementation stores them in `localStorage`, but setup components should remain decoupled from that storage detail.
+
 ## Gameplay Requirements
 
 Each minigame should:

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { keyOptions } from '../keyOptions';
-import type { GameSettings } from '../../game/settings';
+import type { GameSettings, RhythmLanesSettings } from '../../game/settings';
 import type { Minigame } from '../types';
+import { useStoredPresets } from '../../presets/useStoredPresets';
 
 defineProps<{
   minigame: Minigame;
@@ -15,12 +16,16 @@ const emit = defineEmits<{
 const defaultPool = ['A', 'S', 'D', 'F', 'J', 'K', 'L', 'H'];
 const keys = ref(['A', 'S', 'K', 'L']);
 const draggedIndex = ref<number | null>(null);
+const presetName = ref('');
 
 const presets = [
   { label: 'QWER', keys: ['Q', 'W', 'E', 'R'] },
   { label: 'AWD', keys: ['A', 'W', 'D'] },
   { label: 'Left Up Right', keys: ['LEFT', 'UP', 'RIGHT'] },
 ];
+
+const { presets: userPresets, savePreset, deletePreset } =
+  useStoredPresets<RhythmLanesSettings>('rhythm-lanes');
 
 const hasDuplicateKeys = computed(() => {
   const uniqueKeys = new Set(keys.value);
@@ -62,6 +67,19 @@ const applyPreset = (preset: { keys: string[] }) => {
   keys.value = [...preset.keys];
 };
 
+const getCurrentSettings = (): RhythmLanesSettings => ({
+  keys: [...keys.value],
+});
+
+const saveCurrentPreset = async () => {
+  if (hasDuplicateKeys.value || keys.value.length === 0 || !presetName.value.trim()) {
+    return;
+  }
+
+  await savePreset(presetName.value, getCurrentSettings());
+  presetName.value = '';
+};
+
 const onDragStart = (index: number, event: DragEvent) => {
   draggedIndex.value = index;
   event.dataTransfer?.setData('text/plain', String(index));
@@ -88,9 +106,7 @@ const start = () => {
 
   emit('start', {
     sceneKey: 'RhythmLanesScene',
-    settings: {
-      keys: [...keys.value],
-    },
+    settings: getCurrentSettings(),
   });
 };
 </script>
@@ -112,6 +128,25 @@ const start = () => {
         >
           {{ preset.label }}
         </button>
+      </div>
+    </div>
+
+    <div v-if="userPresets.length > 0" class="saved-presets" aria-label="Saved presets">
+      <span>Saved presets</span>
+      <div class="saved-preset-list">
+        <div v-for="preset in userPresets" :key="preset.id" class="saved-preset">
+          <button type="button" @click="applyPreset(preset.value)">
+            {{ preset.name }}
+          </button>
+          <button
+            type="button"
+            class="saved-preset-delete"
+            :aria-label="`Delete ${preset.name}`"
+            @click="deletePreset(preset.id)"
+          >
+            -
+          </button>
+        </div>
       </div>
     </div>
 
@@ -172,6 +207,18 @@ const start = () => {
     </p>
 
     <footer class="setup-actions">
+      <label class="preset-save-field">
+        <span>Preset name</span>
+        <input v-model="presetName" type="text" placeholder="My layout" />
+      </label>
+      <button
+        type="button"
+        class="secondary-button"
+        :disabled="hasDuplicateKeys || !presetName.trim()"
+        @click="saveCurrentPreset"
+      >
+        Save preset
+      </button>
       <button type="button" class="start-button" :disabled="hasDuplicateKeys" @click="start">
         Start
       </button>
