@@ -1,10 +1,4 @@
-import Phaser from 'phaser';
+import { Events } from 'phaser';
 
-const emitter = new Phaser.Events.EventEmitter();
-
-export const EventBus = {
-  emit: emitter.emit.bind(emitter),
-  on: emitter.on.bind(emitter),
-  off: emitter.off.bind(emitter),
-  once: emitter.once.bind(emitter),
-};
+// Used to emit events between components, HTML and Phaser scenes
+export const EventBus = new Events.EventEmitter();
