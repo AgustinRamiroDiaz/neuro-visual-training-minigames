@@ -242,6 +242,19 @@ select {
   align-self: end;
 }
 
+.game-card-footer {
+  align-self: end;
+  border-top: 1px solid #dfe3ea;
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  width: 100%;
+}
+
+.game-card-footer small {
+  align-self: auto;
+}
+
 .preview {
   align-content: center;
   background:

@@ -4,14 +4,9 @@ import GameCard from './components/GameCard.vue';
 import PhaserGame from './components/PhaserGame.vue';
 import { minigames, skillAreas, type MinigameDefinition } from './data/minigames';
 import type { GameSettings } from './game/settings';
+import type { GameFinishedPayload } from './history/playHistory';
+import { useHistoryStore } from './stores/historyStore';
 import HistoryView from './views/HistoryView.vue';
-import {
-  createPlayHistoryRecord,
-  loadPlayHistory,
-  savePlayHistory,
-  type GameFinishedPayload,
-  type PlayHistoryRecord,
-} from './history/playHistory';
 
 const search = ref('');
 const activeSkill = ref<(typeof skillAreas)[number]>('All');
@@ -19,7 +14,7 @@ const configuringGame = ref<MinigameDefinition | null>(null);
 const activeGame = ref<MinigameDefinition | null>(null);
 const activeGameSettings = ref<GameSettings | null>(null);
 const historyVisible = ref(false);
-const playHistory = ref<PlayHistoryRecord[]>(loadPlayHistory());
+const historyStore = useHistoryStore();
 
 const filteredGames = computed(() => {
   const query = search.value.trim().toLowerCase();
@@ -70,15 +65,13 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
     return;
   }
 
-  const nextHistory = [createPlayHistoryRecord(activeGame.value, payload), ...playHistory.value];
-  playHistory.value = nextHistory;
-  savePlayHistory(nextHistory);
+  historyStore.addPlaythrough(activeGame.value, payload);
 };
 </script>
 
 <template>
   <main class="app-shell">
-    <HistoryView v-if="historyVisible" :records="playHistory" @catalog="returnToCatalog" />
+    <HistoryView v-if="historyVisible" :records="historyStore.records" @catalog="returnToCatalog" />
 
     <section v-else-if="!configuringGame && !activeGame" class="catalog-view">
       <header class="catalog-header">
@@ -92,7 +85,7 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
             minigame session.
           </p>
           <button type="button" class="back-button" @click="showHistory">
-            History {{ playHistory.length }}
+            History {{ historyStore.count }}
           </button>
         </div>
       </header>
@@ -121,6 +114,7 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
           v-for="game in filteredGames"
           :key="game.id"
           :minigame="game"
+          :last-played="historyStore.lastPlayedByGameId[game.id]"
           @select="playGame"
         />
 
