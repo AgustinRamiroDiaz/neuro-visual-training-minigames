@@ -296,6 +296,60 @@ button {
   grid-template-columns: repeat(4, 34px);
 }
 
+.road {
+  background: #20232a;
+  border-radius: 4px;
+  display: block;
+  height: 120px;
+  position: absolute;
+  top: 15px;
+  width: 54px;
+}
+
+.left-road {
+  left: calc(50% - 66px);
+}
+
+.right-road {
+  right: calc(50% - 66px);
+}
+
+.mini-car,
+.mini-obstacle {
+  border-radius: 5px;
+  display: block;
+  position: absolute;
+  width: 22px;
+}
+
+.mini-car {
+  background: var(--accent);
+  bottom: 26px;
+  height: 34px;
+}
+
+.left-car {
+  left: calc(50% - 52px);
+}
+
+.right-car {
+  right: calc(50% - 32px);
+}
+
+.mini-obstacle {
+  background: #ffffff;
+  height: 28px;
+  top: 33px;
+}
+
+.left-obstacle {
+  left: calc(50% - 31px);
+}
+
+.right-obstacle {
+  right: calc(50% - 54px);
+}
+
 .empty-state {
   color: #5f6673;
   grid-column: 1 / -1;

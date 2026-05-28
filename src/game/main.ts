@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { Minigame } from '../data/minigames';
+import { DualLaneDriveScene } from './scenes/DualLaneDriveScene';
 import { TrainingScene } from './scenes/TrainingScene';
 
 export function createGame(parent: string | HTMLElement, minigame: Minigame) {
@@ -9,7 +10,7 @@ export function createGame(parent: string | HTMLElement, minigame: Minigame) {
     height: 560,
     parent,
     backgroundColor: '#f6f3ee',
-    scene: [TrainingScene],
+    scene: [DualLaneDriveScene, TrainingScene],
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -21,7 +22,7 @@ export function createGame(parent: string | HTMLElement, minigame: Minigame) {
   };
 
   const game = new Phaser.Game(config);
-  game.scene.start('TrainingScene', { minigame });
+  game.scene.start(minigame.sceneKey, { minigame });
 
   return game;
 }

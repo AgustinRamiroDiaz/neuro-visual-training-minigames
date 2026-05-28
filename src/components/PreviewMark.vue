@@ -24,8 +24,17 @@ defineProps<{
       <span class="orbit satellite" />
     </template>
 
-    <template v-else>
+    <template v-else-if="minigame.preview.pattern === 'grid'">
       <span v-for="index in 12" :key="index" class="cell" :class="{ lit: [2, 6, 11].includes(index) }" />
+    </template>
+
+    <template v-else>
+      <span class="road left-road" />
+      <span class="road right-road" />
+      <span class="mini-car left-car" />
+      <span class="mini-car right-car" />
+      <span class="mini-obstacle left-obstacle" />
+      <span class="mini-obstacle right-obstacle" />
     </template>
   </div>
 </template>

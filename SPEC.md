@@ -33,12 +33,9 @@ Additional categories should be added only when a game meaningfully trains a dis
 
 ## Current Minigames
 
-- Contrast Catch: find the odd target in a field of similar shapes.
-- Flash Focus: respond to a visual signal as quickly as possible.
-- Smooth Pursuit: track a moving point through changing paths.
-- Sequence Scan: remember and repeat visual grid sequences.
+- Dual Lane Drive: control two cars at once, each with two lanes, and switch the correct car away from incoming obstacles.
 
-These are currently catalog entries with a shared placeholder Phaser play scene. Each future minigame should replace or extend the shared scene with its own mechanics.
+Dual Lane Drive has its own Phaser scene. Future minigames should be added to the catalog only once they are playable.
 
 ## Architecture
 
