@@ -314,6 +314,13 @@ export class DualLaneDriveScene extends Phaser.Scene {
 
   private endGame() {
     this.isGameOver = true;
+    EventBus.emit('game-finished', {
+      metadata: {
+        clearedObstacles: this.score,
+        peakObstaclesPerMinute: this.obstaclesPerMinute,
+        finalSpeed: Math.round(this.speed),
+      },
+    });
 
     this.statusText = this.add
       .text(

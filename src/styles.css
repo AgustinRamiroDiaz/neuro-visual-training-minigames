@@ -33,6 +33,7 @@ button {
 }
 
 .catalog-view,
+.history-view,
 .setup-view,
 .play-view {
   margin: 0 auto;
@@ -73,6 +74,20 @@ button {
   color: #5f6673;
   line-height: 1.6;
   margin: 0 0 8px;
+  max-width: 360px;
+}
+
+.catalog-summary {
+  align-items: flex-end;
+  display: grid;
+  gap: 14px;
+  justify-items: end;
+}
+
+.catalog-summary p {
+  color: #5f6673;
+  line-height: 1.6;
+  margin: 0;
   max-width: 360px;
 }
 
@@ -424,6 +439,59 @@ select {
   color: #5f6673;
   grid-column: 1 / -1;
   padding: 32px 0;
+}
+
+.history-list {
+  display: grid;
+  gap: 14px;
+}
+
+.history-record {
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.15fr);
+  padding: 18px;
+}
+
+.history-record h2 {
+  font-size: 1.35rem;
+  line-height: 1.1;
+  margin: 8px 0;
+}
+
+.history-record span,
+.history-empty-metadata {
+  color: #5f6673;
+}
+
+.history-metadata {
+  display: grid;
+  gap: 10px 16px;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(120px, 1fr);
+  margin: 0;
+}
+
+.history-metadata dt {
+  color: #5f6673;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.history-metadata dd {
+  color: #20232a;
+  font-weight: 800;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.history-empty-metadata {
+  margin: 0;
 }
 
 .play-header {
@@ -781,6 +849,14 @@ select {
   .play-header,
   .setup-row {
     display: grid;
+  }
+
+  .catalog-summary {
+    justify-items: start;
+  }
+
+  .history-record {
+    grid-template-columns: 1fr;
   }
 
   .skill-filter {

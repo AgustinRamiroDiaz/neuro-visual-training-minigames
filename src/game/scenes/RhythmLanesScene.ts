@@ -364,6 +364,14 @@ export class RhythmLanesScene extends Phaser.Scene {
 
   private endGame() {
     this.isGameOver = true;
+    EventBus.emit('game-finished', {
+      metadata: {
+        score: this.score,
+        misses: this.misses,
+        finalStreak: this.streak,
+        peakNotesPerMinute: this.notesPerMinute,
+      },
+    });
 
     this.statusText = this.add
       .text(
