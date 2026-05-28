@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+import AuthView from './views/AuthView.vue';
 import CatalogView from './views/CatalogView.vue';
 import HistoryView from './views/HistoryView.vue';
 import PlayView from './views/PlayView.vue';
@@ -16,6 +17,16 @@ export const router = createRouter({
       path: '/history',
       name: 'history',
       component: HistoryView,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: AuthView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: AuthView,
     },
     {
       path: '/games/:gameId/setup',

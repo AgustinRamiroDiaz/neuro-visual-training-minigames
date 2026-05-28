@@ -48,22 +48,28 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
    - `historyStore` saves the playthrough locally.
 
 2. Create account
-   - `AccountPanel.vue` calls `accountStore.createAccount`.
+   - The Register screen calls `accountStore.createAccount`.
    - Frontend sends `POST /api/users`.
    - Backend creates a `users` row and an empty `user_preferences` row.
    - Frontend remembers the returned user id locally.
 
-3. Save to cloud
+3. Login
+   - The Login screen calls `accountStore.login`.
+   - Frontend sends `POST /api/login`.
+   - Backend looks up the user by username and returns the user id.
+   - Frontend loads cloud preferences and history into local storage.
+
+4. Save to cloud
    - Frontend sends local settings with `PUT /api/users/:userId/preferences`.
    - Frontend sends local history with `PUT /api/users/:userId/history`.
    - Backend replaces the user's cloud history with the submitted records.
 
-4. Load from cloud
+5. Load from cloud
    - Frontend calls `GET /api/users/:userId/sync`.
    - Backend returns user, preferences, and history.
    - Frontend replaces local settings and local history with the cloud data.
 
-5. Play while signed in
+6. Play while signed in
    - Completed playthroughs are written locally first.
    - `PlayView.vue` then asks `accountStore` to save current local settings and history to cloud.
 
@@ -74,6 +80,9 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
 
 - `POST /api/users`
   - Creates a cloud user.
+
+- `POST /api/login`
+  - Looks up a cloud user by username.
 
 - `GET /api/users/:userId/preferences`
   - Reads preference JSON for a user.
@@ -95,4 +104,4 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
 
 ## Current Limits
 
-There is no real authentication yet. The frontend stores the returned user id locally and uses it as the cloud account reference. That is enough for local development and cloud-save plumbing, but production auth should add passwords, sessions or tokens, and account recovery.
+There is no real authentication yet. Register and Login are username-based, and the frontend stores the returned user id locally as the cloud account reference. That is enough for local development and cloud-save plumbing, but production auth should add passwords, sessions or tokens, and account recovery.

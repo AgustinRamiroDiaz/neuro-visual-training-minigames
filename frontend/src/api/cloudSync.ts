@@ -39,6 +39,13 @@ export async function createCloudUser(username: string, displayName?: string) {
   });
 }
 
+export async function loginCloudUser(username: string) {
+  return request<CloudUser>('/login', {
+    method: 'POST',
+    body: JSON.stringify({ username }),
+  });
+}
+
 export async function saveCloudPreferences(userId: string, preferences: CloudPreferences) {
   return request(`/users/${userId}/preferences`, {
     method: 'PUT',

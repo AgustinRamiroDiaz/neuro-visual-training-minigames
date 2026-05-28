@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import {
   createCloudUser,
   getCloudSync,
+  loginCloudUser,
   replaceCloudHistory,
   saveCloudPreferences,
   type CloudPreferences,
@@ -24,12 +25,12 @@ export const useAccountStore = defineStore('account', {
     syncError: null,
   }),
   actions: {
-    async createAccount(username: string) {
+    async createAccount(username: string, displayName?: string) {
       this.syncStatus = 'syncing';
       this.syncError = null;
 
       try {
-        this.user = await createCloudUser(username);
+        this.user = await createCloudUser(username, displayName);
         saveStoredAccount(this.user);
         this.syncStatus = 'synced';
       } catch (error) {
@@ -37,6 +38,26 @@ export const useAccountStore = defineStore('account', {
         this.syncError = getErrorMessage(error);
         throw error;
       }
+    },
+    async login(username: string) {
+      this.syncStatus = 'syncing';
+      this.syncError = null;
+
+      try {
+        this.user = await loginCloudUser(username);
+        saveStoredAccount(this.user);
+        this.syncStatus = 'synced';
+      } catch (error) {
+        this.syncStatus = 'error';
+        this.syncError = getErrorMessage(error);
+        throw error;
+      }
+    },
+    logout() {
+      this.user = null;
+      this.syncStatus = 'idle';
+      this.syncError = null;
+      localStorage.removeItem(ACCOUNT_STORAGE_KEY);
     },
     async saveToCloud(preferences: CloudPreferences, history: PlayHistoryRecord[]) {
       if (!this.user) {

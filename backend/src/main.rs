@@ -28,6 +28,11 @@ struct CreateUserRequest {
     display_name: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+struct LoginRequest {
+    username: String,
+}
+
 #[derive(Debug, Serialize, FromRow)]
 struct UserPreferences {
     user_id: Uuid,
@@ -157,6 +162,31 @@ async fn create_user(
 
     Ok(Json(user))
 }
+
+#[post("/login", data = "<request>")]
+async fn login(pool: &State<PgPool>, request: Json<LoginRequest>) -> Result<Json<User>, ApiError> {
+    let username = request.username.trim();
+
+    if username.is_empty() {
+        return Err(ApiError::bad_request("username is required"));
+    }
+
+    let user = sqlx::query_as::<_, User>(
+        r#"
+        SELECT id, username, display_name, created_at
+        FROM users
+        WHERE username = $1
+        "#,
+    )
+    .bind(username)
+    .fetch_optional(pool.inner())
+    .await
+    .map_err(ApiError::internal)?
+    .ok_or_else(|| ApiError::not_found("user not found"))?;
+
+    Ok(Json(user))
+}
+
 
 #[get("/users/<user_id>/preferences")]
 async fn get_preferences(
@@ -388,6 +418,7 @@ async fn build_rocket() -> Rocket<Build> {
             routes![
                 health,
                 create_user,
+                login,
                 get_preferences,
                 save_preferences,
                 list_history,
