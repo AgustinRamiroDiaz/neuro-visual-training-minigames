@@ -34,5 +34,9 @@ export const useHistoryStore = defineStore('history', {
       this.records = [createPlayHistoryRecord(minigame, payload), ...this.records];
       savePlayHistory(this.records);
     },
+    replaceRecords(records: PlayHistoryRecord[]) {
+      this.records = records;
+      savePlayHistory(this.records);
+    },
   },
 });

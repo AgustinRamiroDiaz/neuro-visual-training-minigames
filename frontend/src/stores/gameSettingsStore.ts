@@ -15,6 +15,15 @@ export const useGameSettingsStore = defineStore('gameSettings', {
     settingsByGameId: loadStoredSettings(),
   }),
   actions: {
+    getCloudPreferences() {
+      return {
+        gameSettings: this.settingsByGameId,
+      };
+    },
+    replaceFromCloud(settingsByGameId: SettingsByGameId = {}) {
+      this.settingsByGameId = settingsByGameId;
+      saveStoredSettings(this.settingsByGameId);
+    },
     getSettingsForGame(minigame: MinigameDefinition) {
       const storedSettings = this.settingsByGameId[minigame.id];
 

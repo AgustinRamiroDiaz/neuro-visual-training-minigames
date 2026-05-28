@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import AccountPanel from '../components/AccountPanel.vue';
 import GameCard from '../components/GameCard.vue';
 import { minigames, skillAreas, type MinigameDefinition } from '../data/minigames';
 import { useHistoryStore } from '../stores/historyStore';
@@ -47,6 +48,8 @@ const configureGame = (game: MinigameDefinition) => {
         </RouterLink>
       </div>
     </header>
+
+    <AccountPanel />
 
     <section class="toolbar" aria-label="Minigame filters">
       <label class="search-field">

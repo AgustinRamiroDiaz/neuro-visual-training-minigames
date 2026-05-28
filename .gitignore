@@ -1,8 +1,11 @@
 # Node.js dependencies
 node_modules/
+frontend/node_modules/
 
 # Build output
 dist/
+frontend/dist/
+backend/target/
 
 # Local env files
 .env
