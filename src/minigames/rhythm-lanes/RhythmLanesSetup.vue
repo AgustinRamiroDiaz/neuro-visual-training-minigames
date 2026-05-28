@@ -16,6 +16,12 @@ const defaultPool = ['A', 'S', 'D', 'F', 'J', 'K', 'L', 'H'];
 const keys = ref(['A', 'S', 'K', 'L']);
 const draggedIndex = ref<number | null>(null);
 
+const presets = [
+  { label: 'QWER', keys: ['Q', 'W', 'E', 'R'] },
+  { label: 'AWD', keys: ['A', 'W', 'D'] },
+  { label: 'Left Up Right', keys: ['LEFT', 'UP', 'RIGHT'] },
+];
+
 const hasDuplicateKeys = computed(() => {
   const uniqueKeys = new Set(keys.value);
 
@@ -50,6 +56,10 @@ const removeLane = (index: number) => {
   }
 
   keys.value.splice(index, 1);
+};
+
+const applyPreset = (preset: { keys: string[] }) => {
+  keys.value = [...preset.keys];
 };
 
 const onDragStart = (index: number, event: DragEvent) => {
@@ -91,6 +101,17 @@ const start = () => {
       <div>
         <h2>Instrument lanes</h2>
         <p>Drag keys to set lane order. Add lanes beside any key, or remove a lane from its corner.</p>
+      </div>
+
+      <div class="preset-group" aria-label="Rhythm lane presets">
+        <button
+          v-for="preset in presets"
+          :key="preset.label"
+          type="button"
+          @click="applyPreset(preset)"
+        >
+          {{ preset.label }}
+        </button>
       </div>
     </div>
 
