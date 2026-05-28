@@ -66,37 +66,57 @@ const start = () => {
         <h2>Car controls</h2>
         <p>Choose the keys that switch each car between its two lanes.</p>
       </div>
-
-      <div class="preset-group" aria-label="Dual lane presets">
-        <button
-          v-for="preset in presets"
-          :key="preset.label"
-          type="button"
-          @click="applyPreset(preset)"
-        >
-          {{ preset.label }}
-        </button>
-      </div>
     </div>
 
-    <div v-if="userPresets.length > 0" class="saved-presets" aria-label="Saved presets">
-      <span>Saved presets</span>
-      <div class="saved-preset-list">
-        <div v-for="preset in userPresets" :key="preset.id" class="saved-preset">
-          <button type="button" @click="applyPreset(preset.value)">
-            {{ preset.name }}
-          </button>
+    <section class="preset-panel" aria-label="Control presets">
+      <div class="preset-column">
+        <span>Presets</span>
+        <div class="preset-group" aria-label="Dual lane presets">
           <button
+            v-for="preset in presets"
+            :key="preset.label"
             type="button"
-            class="saved-preset-delete"
-            :aria-label="`Delete ${preset.name}`"
-            @click="deletePreset(preset.id)"
+            @click="applyPreset(preset)"
           >
-            -
+            {{ preset.label }}
           </button>
         </div>
       </div>
-    </div>
+
+      <div v-if="userPresets.length > 0" class="preset-column" aria-label="Saved presets">
+        <span>Saved</span>
+        <div class="saved-preset-list">
+          <div v-for="preset in userPresets" :key="preset.id" class="saved-preset">
+            <button type="button" @click="applyPreset(preset.value)">
+              {{ preset.name }}
+            </button>
+            <button
+              type="button"
+              class="saved-preset-delete"
+              :aria-label="`Delete ${preset.name}`"
+              @click="deletePreset(preset.id)"
+            >
+              -
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <label class="preset-save-field">
+        <span>Save current</span>
+        <span class="preset-save-control">
+          <input v-model="presetName" type="text" placeholder="Preset name" />
+          <button
+            type="button"
+            class="secondary-button"
+            :disabled="hasDuplicateKeys || !presetName.trim()"
+            @click="saveCurrentPreset"
+          >
+            Save preset
+          </button>
+        </span>
+      </label>
+    </section>
 
     <div class="field-grid">
       <label>
@@ -119,18 +139,6 @@ const start = () => {
     </p>
 
     <footer class="setup-actions">
-      <label class="preset-save-field">
-        <span>Preset name</span>
-        <input v-model="presetName" type="text" placeholder="My layout" />
-      </label>
-      <button
-        type="button"
-        class="secondary-button"
-        :disabled="hasDuplicateKeys || !presetName.trim()"
-        @click="saveCurrentPreset"
-      >
-        Save preset
-      </button>
       <button type="button" class="start-button" :disabled="hasDuplicateKeys" @click="start">
         Start
       </button>
