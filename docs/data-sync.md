@@ -19,7 +19,7 @@ The frontend keeps shared state in Pinia stores:
   - Stores the optional cloud account id and sync status.
   - Calls backend sync helpers in `frontend/src/api/cloudSync.ts`.
 
-Anonymous users only use local storage. Account users still use local storage, but can save that local state to the backend or load backend state into local storage.
+Anonymous users only use local storage. Account users still use local storage, and the app syncs that local state to the backend in the background when the backend is reachable.
 
 ## Backend Storage
 
@@ -59,19 +59,28 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
    - Backend looks up the user by username and returns the user id.
    - Frontend loads cloud preferences and history into local storage.
 
-4. Save to cloud
+4. Background sync
+   - `AccountNav.vue` watches local settings and history.
+   - When local data changes, the app schedules a background sync.
    - Frontend sends local settings with `PUT /api/users/:userId/preferences`.
    - Frontend sends local history with `PUT /api/users/:userId/history`.
    - Backend replaces the user's cloud history with the submitted records.
+   - The UI shows a syncing indicator while requests are in flight.
 
 5. Load from cloud
    - Frontend calls `GET /api/users/:userId/sync`.
    - Backend returns user, preferences, and history.
-   - Frontend replaces local settings and local history with the cloud data.
+   - Frontend merges cloud settings/history with local settings/history.
+   - Local settings win on conflicts, which protects offline edits.
 
 6. Play while signed in
    - Completed playthroughs are written locally first.
-   - `PlayView.vue` then asks `accountStore` to save current local settings and history to cloud.
+   - The background sync watcher notices the local history change and syncs it.
+
+7. Offline and retry
+   - If the backend is unavailable or the browser is offline, local storage remains the source of truth.
+   - The account store marks the sync as pending/offline.
+   - When the browser comes back online, `AccountNav.vue` retries sync automatically.
 
 ## API Summary
 
@@ -98,6 +107,7 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
 
 - `PUT /api/users/:userId/history`
   - Replaces all cloud history records for a user.
+  - Each record includes a stable client id so local/cloud merges do not duplicate playthroughs.
 
 - `GET /api/users/:userId/sync`
   - Returns user, preferences, and history in one request.

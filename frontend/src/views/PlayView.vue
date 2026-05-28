@@ -4,13 +4,11 @@ import { useRoute, useRouter } from 'vue-router';
 import PhaserGame from '../components/PhaserGame.vue';
 import type { GameFinishedPayload } from '../history/playHistory';
 import { findMinigameById } from '../minigames/findMinigame';
-import { useAccountStore } from '../stores/accountStore';
 import { useGameSettingsStore } from '../stores/gameSettingsStore';
 import { useHistoryStore } from '../stores/historyStore';
 
 const route = useRoute();
 const router = useRouter();
-const accountStore = useAccountStore();
 const historyStore = useHistoryStore();
 const settingsStore = useGameSettingsStore();
 
@@ -30,7 +28,6 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
   }
 
   historyStore.addPlaythrough(minigame.value, payload);
-  accountStore.saveToCloud(settingsStore.getCloudPreferences(), historyStore.records);
 };
 </script>
 

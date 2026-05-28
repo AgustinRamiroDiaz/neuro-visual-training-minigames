@@ -61,11 +61,13 @@ button {
 
 .account-name,
 .account-link,
-.account-primary {
+.account-primary,
+.sync-indicator {
   align-items: center;
   border-radius: 999px;
   display: inline-flex;
   font-size: 0.86rem;
+  gap: 7px;
   min-height: 36px;
   padding: 0 12px;
 }
@@ -88,6 +90,48 @@ button {
   background: #20232a;
   border-color: #20232a;
   color: #ffffff;
+}
+
+.sync-indicator {
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  color: #5f6673;
+  font-weight: 800;
+}
+
+.sync-dot {
+  background: #8a93a3;
+  border-radius: 999px;
+  display: inline-block;
+  height: 9px;
+  width: 9px;
+}
+
+.sync-indicator.syncing .sync-dot {
+  animation: sync-pulse 900ms ease-in-out infinite;
+  background: #2f7dff;
+}
+
+.sync-indicator.synced .sync-dot {
+  background: #287d3c;
+}
+
+.sync-indicator.offline .sync-dot,
+.sync-indicator.error .sync-dot {
+  background: #f0b429;
+}
+
+@keyframes sync-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
 }
 
 .play-view {

@@ -14,13 +14,15 @@ const ACCOUNT_STORAGE_KEY = 'neuro-visual-training-account';
 
 interface AccountState {
   user: CloudUser | null;
-  syncStatus: 'idle' | 'syncing' | 'synced' | 'error';
+  pendingSync: boolean;
+  syncStatus: 'idle' | 'syncing' | 'synced' | 'offline' | 'error';
   syncError: string | null;
 }
 
 export const useAccountStore = defineStore('account', {
   state: (): AccountState => ({
     user: loadStoredAccount(),
+    pendingSync: false,
     syncStatus: 'idle',
     syncError: null,
   }),
@@ -55,12 +57,32 @@ export const useAccountStore = defineStore('account', {
     },
     logout() {
       this.user = null;
+      this.pendingSync = false;
       this.syncStatus = 'idle';
       this.syncError = null;
       localStorage.removeItem(ACCOUNT_STORAGE_KEY);
     },
+    markPendingSync() {
+      if (!this.user) {
+        return;
+      }
+
+      this.pendingSync = true;
+
+      if (!navigator.onLine) {
+        this.syncStatus = 'offline';
+        this.syncError = null;
+      }
+    },
     async saveToCloud(preferences: CloudPreferences, history: PlayHistoryRecord[]) {
       if (!this.user) {
+        return;
+      }
+
+      if (!navigator.onLine) {
+        this.pendingSync = true;
+        this.syncStatus = 'offline';
+        this.syncError = null;
         return;
       }
 
@@ -70,14 +92,23 @@ export const useAccountStore = defineStore('account', {
       try {
         await saveCloudPreferences(this.user.id, preferences);
         await replaceCloudHistory(this.user.id, history);
+        this.pendingSync = false;
         this.syncStatus = 'synced';
       } catch (error) {
+        this.pendingSync = true;
         this.syncStatus = 'error';
         this.syncError = getErrorMessage(error);
       }
     },
     async loadFromCloud() {
       if (!this.user) {
+        return null;
+      }
+
+      if (!navigator.onLine) {
+        this.pendingSync = true;
+        this.syncStatus = 'offline';
+        this.syncError = null;
         return null;
       }
 

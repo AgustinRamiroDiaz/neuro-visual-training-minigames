@@ -48,6 +48,7 @@ struct SavePreferencesRequest {
 #[derive(Debug, Serialize, FromRow)]
 struct PlayHistoryRecord {
     id: Uuid,
+    client_id: String,
     user_id: Uuid,
     timestamp: DateTime<Utc>,
     game_id: String,
@@ -57,6 +58,7 @@ struct PlayHistoryRecord {
 
 #[derive(Debug, Deserialize)]
 struct CreateHistoryRecordRequest {
+    id: Option<String>,
     timestamp: DateTime<Utc>,
     game_id: String,
     game_name: String,
@@ -249,14 +251,21 @@ async fn create_history_record(
 ) -> Result<Json<PlayHistoryRecord>, ApiError> {
     let user_id = parse_user_id(user_id)?;
     ensure_user_exists(pool.inner(), user_id).await?;
+    let client_id = request
+        .id
+        .as_deref()
+        .filter(|id| !id.trim().is_empty())
+        .map(str::to_string)
+        .unwrap_or_else(|| Uuid::new_v4().to_string());
 
     let record = sqlx::query_as::<_, PlayHistoryRecord>(
         r#"
-        INSERT INTO play_history (user_id, timestamp, game_id, game_name, metadata)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, user_id, timestamp, game_id, game_name, metadata
+        INSERT INTO play_history (client_id, user_id, timestamp, game_id, game_name, metadata)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id, client_id, user_id, timestamp, game_id, game_name, metadata
         "#,
     )
+    .bind(client_id)
     .bind(user_id)
     .bind(request.timestamp)
     .bind(request.game_id.trim())
@@ -287,12 +296,20 @@ async fn replace_history(
         .map_err(ApiError::internal)?;
 
     for record in request.iter() {
+        let client_id = record
+            .id
+            .as_deref()
+            .filter(|id| !id.trim().is_empty())
+            .map(str::to_string)
+            .unwrap_or_else(|| Uuid::new_v4().to_string());
+
         sqlx::query(
             r#"
-            INSERT INTO play_history (user_id, timestamp, game_id, game_name, metadata)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO play_history (client_id, user_id, timestamp, game_id, game_name, metadata)
+            VALUES ($1, $2, $3, $4, $5, $6)
             "#,
         )
+        .bind(client_id)
         .bind(user_id)
         .bind(record.timestamp)
         .bind(record.game_id.trim())
@@ -373,7 +390,7 @@ async fn upsert_empty_preferences(
 async fn get_history(pool: &PgPool, user_id: Uuid) -> Result<Vec<PlayHistoryRecord>, ApiError> {
     sqlx::query_as::<_, PlayHistoryRecord>(
         r#"
-        SELECT id, user_id, timestamp, game_id, game_name, metadata
+        SELECT id, client_id, user_id, timestamp, game_id, game_name, metadata
         FROM play_history
         WHERE user_id = $1
         ORDER BY timestamp DESC

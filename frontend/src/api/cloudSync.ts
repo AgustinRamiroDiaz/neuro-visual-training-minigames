@@ -16,6 +16,7 @@ export interface CloudPreferences {
 
 interface CloudHistoryRecord {
   id: string;
+  client_id: string;
   user_id: string;
   timestamp: string;
   game_id: string;
@@ -58,6 +59,7 @@ export async function replaceCloudHistory(userId: string, records: PlayHistoryRe
     method: 'PUT',
     body: JSON.stringify(
       records.map((record) => ({
+        id: record.id,
         timestamp: record.timestamp,
         game_id: record.gameId,
         game_name: record.gameName,
@@ -103,7 +105,7 @@ async function request<T>(path: string, options: RequestInit = {}) {
 
 function mapCloudHistoryRecord(record: CloudHistoryRecord): PlayHistoryRecord {
   return {
-    id: record.id,
+    id: record.client_id,
     timestamp: record.timestamp,
     gameId: record.game_id,
     gameName: record.game_name,
