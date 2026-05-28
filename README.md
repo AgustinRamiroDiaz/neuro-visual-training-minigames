@@ -37,3 +37,5 @@ cargo run
 The backend uses Rocket, sqlx, and Postgres. Set `DATABASE_URL` when running outside Docker.
 
 See `SPEC.md` for product direction and `AGENTS.md` for implementation conventions.
+
+See `docs/data-sync.md` for how the frontend and backend store and sync user data.
