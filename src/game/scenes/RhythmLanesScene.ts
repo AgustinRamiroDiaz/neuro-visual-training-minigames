@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { EventBus } from '../EventBus';
+import { normalizeKeyboardEventKey } from '../inputKeys';
+import type { GameSettings, RhythmLanesSettings } from '../settings';
 import type { Minigame } from '../../data/minigames';
 
 interface RhythmLane {
@@ -14,16 +16,13 @@ interface RhythmNote {
 }
 
 export class RhythmLanesScene extends Phaser.Scene {
-  private readonly lanes: RhythmLane[] = [
-    { key: 'A', x: 270 },
-    { key: 'S', x: 390 },
-    { key: 'K', x: 510 },
-    { key: 'L', x: 630 },
-  ];
-
   private readonly targetY = 438;
   private readonly hitWindow = 44;
+  private lanes: RhythmLane[] = [];
   private minigame?: Minigame;
+  private settings: RhythmLanesSettings = {
+    keys: ['A', 'S', 'K', 'L'],
+  };
   private notes: RhythmNote[] = [];
   private score = 0;
   private streak = 0;
@@ -43,8 +42,13 @@ export class RhythmLanesScene extends Phaser.Scene {
     super({ key: 'RhythmLanesScene' });
   }
 
-  init(data: { minigame?: Minigame }) {
+  init(data: { minigame?: Minigame; gameSettings?: GameSettings }) {
     this.minigame = data.minigame;
+    this.settings =
+      data.gameSettings?.sceneKey === 'RhythmLanesScene'
+        ? data.gameSettings.settings
+        : { keys: ['A', 'S', 'K', 'L'] };
+    this.lanes = this.createLanes(this.settings.keys);
     this.notes = [];
     this.score = 0;
     this.streak = 0;
@@ -77,8 +81,15 @@ export class RhythmLanesScene extends Phaser.Scene {
     this.add.rectangle(450, 280, 540, 560, 0x20232a, 1);
 
     this.lanes.forEach((lane, index) => {
-      this.add.rectangle(lane.x, 280, 112, 560, index % 2 === 0 ? 0x27303b : 0x222a34, 1);
-      this.add.line(lane.x - 56, 280, 0, -280, 0, 280, 0xf6f3ee, 0.12);
+      this.add.rectangle(
+        lane.x,
+        280,
+        this.getLaneWidth(),
+        560,
+        index % 2 === 0 ? 0x27303b : 0x222a34,
+        1,
+      );
+      this.add.line(lane.x - this.getLaneWidth() / 2, 280, 0, -280, 0, 280, 0xf6f3ee, 0.12);
       this.add
         .text(lane.x, this.targetY + 2, lane.key, {
           fontFamily: 'Arial, sans-serif',
@@ -153,16 +164,14 @@ export class RhythmLanesScene extends Phaser.Scene {
 
   private createControls() {
     this.lanes.forEach((lane, index) => {
-      this.input.keyboard?.on(`keydown-${lane.key}`, () => this.tryHit(index));
       this.createButton(lane.x, 512, lane.key, () => this.tryHit(index));
     });
 
-    this.input.keyboard?.on('keydown-ENTER', () => this.restartIfGameOver());
-    this.input.keyboard?.on('keydown-SPACE', () => this.restartIfGameOver());
+    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
   }
 
   private createButton(x: number, y: number, label: string, onPress: () => void) {
-    const button = this.add.rectangle(x, y, 74, 48, 0xffffff, 1);
+    const button = this.add.rectangle(x, y, Math.max(42, Math.min(74, this.getLaneWidth() - 12)), 48, 0xffffff, 1);
     button.setStrokeStyle(2, 0xd8dce3, 1);
     button.setInteractive({ useHandCursor: true });
     button.on('pointerdown', onPress);
@@ -174,6 +183,39 @@ export class RhythmLanesScene extends Phaser.Scene {
         color: '#20232a',
       })
       .setOrigin(0.5);
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    const key = normalizeKeyboardEventKey(event.key);
+
+    if (key === 'ENTER' || key === 'SPACE') {
+      this.restartIfGameOver();
+      return;
+    }
+
+    if (event.repeat || this.isGameOver) {
+      return;
+    }
+
+    const laneIndex = this.lanes.findIndex((lane) => lane.key === key);
+
+    if (laneIndex !== -1) {
+      this.tryHit(laneIndex);
+    }
+  }
+
+  private createLanes(keys: string[]) {
+    const laneWidth = Math.min(112, 540 / keys.length);
+    const startX = 450 - ((keys.length - 1) * laneWidth) / 2;
+
+    return keys.map((key, index) => ({
+      key,
+      x: startX + index * laneWidth,
+    }));
+  }
+
+  private getLaneWidth() {
+    return Math.min(112, 540 / this.lanes.length);
   }
 
   private updateSpawner(delta: number) {
@@ -312,6 +354,9 @@ export class RhythmLanesScene extends Phaser.Scene {
     }
 
     this.statusText?.destroy();
-    this.scene.restart({ minigame: this.minigame });
+    this.scene.restart({
+      minigame: this.minigame,
+      gameSettings: { sceneKey: 'RhythmLanesScene', settings: this.settings },
+    });
   }
 }

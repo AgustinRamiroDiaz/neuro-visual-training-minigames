@@ -4,9 +4,11 @@ import { onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 import type { Minigame } from '../data/minigames';
 import { EventBus } from '../game/EventBus';
 import { createGame } from '../game/main';
+import type { GameSettings } from '../game/settings';
 
 const props = defineProps<{
   minigame: Minigame;
+  gameSettings: GameSettings;
 }>();
 
 const emit = defineEmits<{
@@ -28,7 +30,7 @@ onMounted(() => {
   }
 
   EventBus.on('current-scene-ready', onSceneReady);
-  game.value = createGame(gameContainer.value, props.minigame);
+  game.value = createGame(gameContainer.value, props.minigame, props.gameSettings);
 });
 
 onBeforeUnmount(() => {

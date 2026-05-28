@@ -22,7 +22,9 @@ Use `pnpm run build` as the default verification command after code changes.
 - `src/main.ts`: Vue app entry.
 - `src/App.vue`: catalog and play-view state.
 - `src/components/`: Vue UI components.
-- `src/data/minigames.ts`: minigame metadata used by the catalog.
+- `src/minigames/registry.ts`: playable minigame registrations.
+- `src/minigames/types.ts`: pluggable minigame interface.
+- `src/data/minigames.ts`: compatibility re-export of the registry.
 - `src/game/`: Phaser setup, event bridge, and scenes.
 - `SPEC.md`: product and architecture specification.
 
@@ -30,7 +32,9 @@ Use `pnpm run build` as the default verification command after code changes.
 
 - Keep Vue responsible for browsing, filtering, layout, menus, settings, and session summaries.
 - Keep Phaser responsible for interactive gameplay, animation, physics, and in-game input.
-- Add minigame metadata in `src/data/minigames.ts` before exposing a new game in the catalog.
+- Add new playable minigames through `src/minigames/registry.ts`.
+- Put minigame-specific setup UI beside the minigame under `src/minigames/<game-id>/`.
+- Keep `src/App.vue` generic; do not add per-minigame configuration branches there.
 - Prefer one Phaser scene per distinct game once mechanics diverge.
 - Use `src/game/EventBus.ts` for narrow communication from Phaser to Vue, such as scene readiness, score updates, game-over events, or settings changes.
 - Destroy Phaser game instances when leaving play views to avoid duplicate canvases and stale listeners.

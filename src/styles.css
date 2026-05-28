@@ -18,7 +18,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -32,6 +33,7 @@ button {
 }
 
 .catalog-view,
+.setup-view,
 .play-view {
   margin: 0 auto;
   max-width: 1180px;
@@ -109,6 +111,18 @@ button {
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
+  width: 100%;
+}
+
+select {
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  border-radius: 8px;
+  color: #20232a;
+  min-height: 46px;
+  outline: none;
+  padding: 0 40px 0 14px;
   width: 100%;
 }
 
@@ -408,6 +422,121 @@ button {
   align-items: center;
 }
 
+.setup-panel {
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  display: grid;
+  gap: 28px;
+  padding: 28px;
+}
+
+.setup-row {
+  align-items: end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.setup-row h2 {
+  font-size: 1.55rem;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.setup-row p {
+  color: #5f6673;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 520px;
+}
+
+.preset-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.preset-group button,
+.start-button {
+  background: #20232a;
+  border: 1px solid #20232a;
+  border-radius: 999px;
+  color: #ffffff;
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.preset-group button {
+  background: #ffffff;
+  border-color: #d8dce3;
+  color: #3b414d;
+}
+
+.field-grid,
+.lane-order {
+  display: grid;
+  gap: 16px;
+}
+
+.field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lane-order {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.field-grid label,
+.lane-order label,
+.count-field {
+  display: grid;
+  gap: 8px;
+}
+
+.field-grid span,
+.lane-order span,
+.count-field span {
+  color: #5f6673;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.count-field input {
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  border-radius: 8px;
+  color: #20232a;
+  min-height: 46px;
+  padding: 0 14px;
+  width: 110px;
+}
+
+.setup-error {
+  color: #b42335;
+  font-weight: 700;
+  margin: 0;
+}
+
+.setup-actions {
+  align-items: center;
+  border-top: 1px solid #dfe3ea;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 22px;
+}
+
+.start-button {
+  min-width: 120px;
+}
+
+.start-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .phaser-game {
   background: #ffffff;
   border: 1px solid #dfe3ea;
@@ -427,13 +556,15 @@ button {
 
   .catalog-header,
   .play-header,
+  .setup-row,
   .toolbar {
     align-items: stretch;
     grid-template-columns: 1fr;
   }
 
   .catalog-header,
-  .play-header {
+  .play-header,
+  .setup-row {
     display: grid;
   }
 
@@ -442,6 +573,11 @@ button {
   }
 
   .game-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-grid,
+  .lane-order {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -457,6 +593,15 @@ button {
 
   .game-card {
     min-height: 320px;
+  }
+
+  .field-grid,
+  .lane-order {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-panel {
+    padding: 18px;
   }
 
   .phaser-game {

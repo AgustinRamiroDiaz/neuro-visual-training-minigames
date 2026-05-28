@@ -1,10 +1,15 @@
 import Phaser from 'phaser';
 import type { Minigame } from '../data/minigames';
+import type { GameSettings } from './settings';
 import { DualLaneDriveScene } from './scenes/DualLaneDriveScene';
 import { RhythmLanesScene } from './scenes/RhythmLanesScene';
 import { TrainingScene } from './scenes/TrainingScene';
 
-export function createGame(parent: string | HTMLElement, minigame: Minigame) {
+export function createGame(
+  parent: string | HTMLElement,
+  minigame: Minigame,
+  gameSettings: GameSettings,
+) {
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 900,
@@ -23,7 +28,7 @@ export function createGame(parent: string | HTMLElement, minigame: Minigame) {
   };
 
   const game = new Phaser.Game(config);
-  game.scene.start(minigame.sceneKey, { minigame });
+  game.scene.start(minigame.sceneKey, { minigame, gameSettings });
 
   return game;
 }

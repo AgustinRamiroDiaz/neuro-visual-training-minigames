@@ -20,6 +20,8 @@ Users arrive at a main catalog view that presents each minigame as a card with:
 
 Users can search by title, summary, difficulty, or skill area. They can also filter by skill category. Selecting a card opens the play view for that minigame.
 
+Before gameplay starts, each minigame can present a configuration screen for controls, difficulty, lane count, or other session settings.
+
 ## Skill Areas
 
 Initial skill categories:
@@ -38,16 +40,22 @@ Additional categories should be added only when a game meaningfully trains a dis
 
 Dual Lane Drive and Rhythm Lanes have their own Phaser scenes. Future minigames should be added to the catalog only once they are playable.
 
+Dual Lane Drive supports configurable left-car and right-car keys, with presets for `A + D`, `Left + Right`, and `F + J`.
+
+Rhythm Lanes supports a configurable number of lanes and a configurable left-to-right key order.
+
 ## Architecture
 
 Vue owns the application shell:
 
 - `src/main.ts` mounts the Vue app.
-- `src/App.vue` manages catalog search, filtering, selection, and play view state.
+- `src/App.vue` manages catalog search, filtering, selection, setup flow, and play view state without embedding minigame-specific configuration logic.
 - `src/components/GameCard.vue` renders a minigame card.
 - `src/components/PreviewMark.vue` renders lightweight catalog previews.
 - `src/components/PhaserGame.vue` creates and destroys the Phaser game instance.
-- `src/data/minigames.ts` stores catalog metadata.
+- `src/minigames/registry.ts` registers playable minigames.
+- `src/minigames/types.ts` defines the pluggable minigame interface.
+- `src/data/minigames.ts` re-exports the registry for compatibility.
 
 Phaser owns gameplay:
 
@@ -56,6 +64,15 @@ Phaser owns gameplay:
 - `src/game/EventBus.ts` allows Phaser scenes and Vue components to communicate.
 
 This follows the same broad pattern as `phaserjs/template-vue-ts`: Vue handles interface state, Phaser runs inside a component, and an event bus bridges scene readiness or gameplay state back to Vue.
+
+Each minigame registration must provide:
+
+- Catalog metadata.
+- The Phaser scene key.
+- A Vue setup component responsible for that minigame's configuration UI.
+- A default settings factory.
+
+The dashboard should not contain per-minigame setup forms or scene-specific conditionals.
 
 ## Gameplay Requirements
 
@@ -77,6 +94,7 @@ The main view must support:
 - A responsive card grid.
 - A clear empty state when no minigames match.
 - One-click transition into the selected minigame.
+- Per-game setup before launching a Phaser session when the game has configurable controls or difficulty.
 
 ## Accessibility And Safety
 

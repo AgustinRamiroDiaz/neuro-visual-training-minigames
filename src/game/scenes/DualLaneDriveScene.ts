@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { EventBus } from '../EventBus';
+import { normalizeKeyboardEventKey } from '../inputKeys';
+import type { DualLaneDriveSettings, GameSettings } from '../settings';
 import type { Minigame } from '../../data/minigames';
 
 type Side = 'left' | 'right';
@@ -31,6 +33,10 @@ export class DualLaneDriveScene extends Phaser.Scene {
   private speed = 185;
   private isGameOver = false;
   private minigame?: Minigame;
+  private settings: DualLaneDriveSettings = {
+    leftKey: 'A',
+    rightKey: 'D',
+  };
   private scoreText?: Phaser.GameObjects.Text;
   private rateText?: Phaser.GameObjects.Text;
   private statusText?: Phaser.GameObjects.Text;
@@ -39,8 +45,12 @@ export class DualLaneDriveScene extends Phaser.Scene {
     super({ key: 'DualLaneDriveScene' });
   }
 
-  init(data: { minigame?: Minigame }) {
+  init(data: { minigame?: Minigame; gameSettings?: GameSettings }) {
     this.minigame = data.minigame;
+    this.settings =
+      data.gameSettings?.sceneKey === 'DualLaneDriveScene'
+        ? data.gameSettings.settings
+        : { leftKey: 'A', rightKey: 'D' };
     this.obstacles = [];
     this.score = 0;
     this.obstaclesPerMinute = 30;
@@ -59,15 +69,14 @@ export class DualLaneDriveScene extends Phaser.Scene {
       right: this.createCar('right', 1, 0xe24d68),
     };
 
-    this.input.keyboard?.on('keydown-A', () => this.switchLane('left'));
-    this.input.keyboard?.on('keydown-LEFT', () => this.switchLane('left'));
-    this.input.keyboard?.on('keydown-D', () => this.switchLane('right'));
-    this.input.keyboard?.on('keydown-RIGHT', () => this.switchLane('right'));
-    this.input.keyboard?.on('keydown-ENTER', () => this.restartIfGameOver());
-    this.input.keyboard?.on('keydown-SPACE', () => this.restartIfGameOver());
+    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
 
-    this.createControlButton(250, 508, 'Left car', 'A / <-', () => this.switchLane('left'));
-    this.createControlButton(650, 508, 'Right car', 'D / ->', () => this.switchLane('right'));
+    this.createControlButton(250, 508, 'Left car', this.settings.leftKey, () =>
+      this.switchLane('left'),
+    );
+    this.createControlButton(650, 508, 'Right car', this.settings.rightKey, () =>
+      this.switchLane('right'),
+    );
 
     EventBus.emit('current-scene-ready', this);
   }
@@ -209,6 +218,28 @@ export class DualLaneDriveScene extends Phaser.Scene {
     });
   }
 
+  private handleKeyDown(event: KeyboardEvent) {
+    const key = normalizeKeyboardEventKey(event.key);
+
+    if (key === 'ENTER' || key === 'SPACE') {
+      this.restartIfGameOver();
+      return;
+    }
+
+    if (event.repeat || this.isGameOver) {
+      return;
+    }
+
+    if (key === this.settings.leftKey) {
+      this.switchLane('left');
+      return;
+    }
+
+    if (key === this.settings.rightKey) {
+      this.switchLane('right');
+    }
+  }
+
   private spawnObstacle() {
     if (this.isGameOver) {
       return;
@@ -281,6 +312,9 @@ export class DualLaneDriveScene extends Phaser.Scene {
     }
 
     this.statusText?.destroy();
-    this.scene.restart({ minigame: this.minigame });
+    this.scene.restart({
+      minigame: this.minigame,
+      gameSettings: { sceneKey: 'DualLaneDriveScene', settings: this.settings },
+    });
   }
 }

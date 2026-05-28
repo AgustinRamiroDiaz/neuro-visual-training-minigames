@@ -2,11 +2,14 @@
 import { computed, ref } from 'vue';
 import GameCard from './components/GameCard.vue';
 import PhaserGame from './components/PhaserGame.vue';
-import { minigames, skillAreas, type Minigame } from './data/minigames';
+import { minigames, skillAreas, type MinigameDefinition } from './data/minigames';
+import type { GameSettings } from './game/settings';
 
 const search = ref('');
 const activeSkill = ref<(typeof skillAreas)[number]>('All');
-const selectedGame = ref<Minigame | null>(null);
+const configuringGame = ref<MinigameDefinition | null>(null);
+const activeGame = ref<MinigameDefinition | null>(null);
+const activeGameSettings = ref<GameSettings | null>(null);
 
 const filteredGames = computed(() => {
   const query = search.value.trim().toLowerCase();
@@ -23,14 +26,30 @@ const filteredGames = computed(() => {
   });
 });
 
-const playGame = (game: Minigame) => {
-  selectedGame.value = game;
+const playGame = (game: MinigameDefinition) => {
+  configuringGame.value = game;
+};
+
+const startConfiguredGame = (settings: GameSettings) => {
+  if (!configuringGame.value) {
+    return;
+  }
+
+  activeGameSettings.value = settings;
+  activeGame.value = configuringGame.value;
+  configuringGame.value = null;
+};
+
+const returnToCatalog = () => {
+  configuringGame.value = null;
+  activeGame.value = null;
+  activeGameSettings.value = null;
 };
 </script>
 
 <template>
   <main class="app-shell">
-    <section v-if="!selectedGame" class="catalog-view">
+    <section v-if="!configuringGame && !activeGame" class="catalog-view">
       <header class="catalog-header">
         <div>
           <p class="eyebrow">Neuro Visual Training</p>
@@ -75,16 +94,32 @@ const playGame = (game: Minigame) => {
       </section>
     </section>
 
-    <section v-else class="play-view">
+    <section v-else-if="configuringGame" class="setup-view">
       <header class="play-header">
-        <button type="button" class="back-button" @click="selectedGame = null">Back</button>
+        <button type="button" class="back-button" @click="returnToCatalog">Back</button>
         <div>
-          <p class="eyebrow">{{ selectedGame.skillArea }}</p>
-          <h1>{{ selectedGame.title }}</h1>
+          <p class="eyebrow">{{ configuringGame.skillArea }}</p>
+          <h1>{{ configuringGame.title }}</h1>
         </div>
       </header>
 
-      <PhaserGame :key="selectedGame.id" :minigame="selectedGame" />
+      <component
+        :is="configuringGame.setupComponent"
+        :minigame="configuringGame"
+        @start="startConfiguredGame"
+      />
+    </section>
+
+    <section v-else-if="activeGame && activeGameSettings" class="play-view">
+      <header class="play-header">
+        <button type="button" class="back-button" @click="returnToCatalog">Back</button>
+        <div>
+          <p class="eyebrow">{{ activeGame.skillArea }}</p>
+          <h1>{{ activeGame.title }}</h1>
+        </div>
+      </header>
+
+      <PhaserGame :key="activeGame.id" :minigame="activeGame" :game-settings="activeGameSettings" />
     </section>
   </main>
 </template>
