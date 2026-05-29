@@ -218,8 +218,8 @@ const start = () => {
         v-for="(key, index) in keys"
         :key="`${key}-${index}`"
       >
-        <article
-          class="lane-tile"
+        <Card
+          class="lane-card"
           :class="{ dragging: draggedIndex === index }"
           draggable="true"
           @dragstart="onDragStart(index, $event)"
@@ -227,28 +227,38 @@ const start = () => {
           @dragover.prevent
           @drop="onDrop(index)"
         >
-          <Button
-            label="-"
-            class="lane-remove-button"
-            severity="danger"
-            rounded
-            outlined
-            :disabled="!canRemoveLane"
-            :aria-label="`Remove ${key} lane`"
-            @click="removeLane(index)"
-          />
+          <template #title>
+            Lane {{ index + 1 }}
+          </template>
 
-          <label class="lane-key-picker">
-            <span class="sr-only">Key for lane {{ index + 1 }}</span>
-            <Select
-              v-model="keys[index]"
-              :options="[...keyOptions]"
-              @mousedown.stop
-              @dragstart.stop
+          <template #subtitle>
+            Drag to reorder
+          </template>
+
+          <template #content>
+            <label class="lane-key-picker">
+              <span class="sr-only">Key for lane {{ index + 1 }}</span>
+              <Select
+                v-model="keys[index]"
+                :options="[...keyOptions]"
+                @mousedown.stop
+                @dragstart.stop
+              />
+            </label>
+          </template>
+
+          <template #footer>
+            <Button
+              label="Remove"
+              severity="danger"
+              outlined
+              fluid
+              :disabled="!canRemoveLane"
+              :aria-label="`Remove ${key} lane`"
+              @click="removeLane(index)"
             />
-          </label>
-          <span>Lane {{ index + 1 }}</span>
-        </article>
+          </template>
+        </Card>
 
         <Button
           label="+"
