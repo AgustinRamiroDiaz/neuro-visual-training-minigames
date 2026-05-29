@@ -3,8 +3,9 @@ import type { GameSettings } from '../game/settings';
 import type { MinigameDefinition } from '../minigames/types';
 
 const SETTINGS_STORAGE_KEY = 'neuro-visual-training-game-settings';
+const ANONYMOUS_SETTINGS_STORAGE_KEY = `${SETTINGS_STORAGE_KEY}:anonymous`;
 
-type SettingsByGameId = Record<string, GameSettings>;
+export type SettingsByGameId = Record<string, GameSettings>;
 
 interface GameSettingsState {
   settingsByGameId: SettingsByGameId;
@@ -43,8 +44,8 @@ export const useGameSettingsStore = defineStore('gameSettings', {
   },
 });
 
-function loadStoredSettings(): SettingsByGameId {
-  const rawSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+export function loadStoredSettings(storageKey = SETTINGS_STORAGE_KEY): SettingsByGameId {
+  const rawSettings = localStorage.getItem(storageKey);
 
   if (!rawSettings) {
     return {};
@@ -63,8 +64,20 @@ function loadStoredSettings(): SettingsByGameId {
   }
 }
 
-function saveStoredSettings(settings: SettingsByGameId) {
-  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+export function saveStoredSettings(settings: SettingsByGameId, storageKey = SETTINGS_STORAGE_KEY) {
+  localStorage.setItem(storageKey, JSON.stringify(settings));
+}
+
+export function removeStoredSettings(storageKey = SETTINGS_STORAGE_KEY) {
+  localStorage.removeItem(storageKey);
+}
+
+export function saveAnonymousSettings(settings: SettingsByGameId) {
+  saveStoredSettings(settings, ANONYMOUS_SETTINGS_STORAGE_KEY);
+}
+
+export function loadAnonymousSettings() {
+  return loadStoredSettings(ANONYMOUS_SETTINGS_STORAGE_KEY);
 }
 
 function cloneSettings(settings: GameSettings): GameSettings {

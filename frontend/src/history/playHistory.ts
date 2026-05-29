@@ -1,6 +1,7 @@
 import type { Minigame } from '../minigames/types';
 
 const HISTORY_STORAGE_KEY = 'neuro-visual-training-play-history';
+const ANONYMOUS_HISTORY_STORAGE_KEY = `${HISTORY_STORAGE_KEY}:anonymous`;
 
 export type PlayMetadataValue =
   | string
@@ -39,8 +40,8 @@ export function createPlayHistoryRecord(
   };
 }
 
-export function loadPlayHistory(): PlayHistoryRecord[] {
-  const rawHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+export function loadPlayHistory(storageKey = HISTORY_STORAGE_KEY): PlayHistoryRecord[] {
+  const rawHistory = localStorage.getItem(storageKey);
 
   if (!rawHistory) {
     return [];
@@ -59,8 +60,20 @@ export function loadPlayHistory(): PlayHistoryRecord[] {
   }
 }
 
-export function savePlayHistory(records: PlayHistoryRecord[]) {
-  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(records));
+export function savePlayHistory(records: PlayHistoryRecord[], storageKey = HISTORY_STORAGE_KEY) {
+  localStorage.setItem(storageKey, JSON.stringify(records));
+}
+
+export function removePlayHistory(storageKey = HISTORY_STORAGE_KEY) {
+  localStorage.removeItem(storageKey);
+}
+
+export function saveAnonymousPlayHistory(records: PlayHistoryRecord[]) {
+  savePlayHistory(records, ANONYMOUS_HISTORY_STORAGE_KEY);
+}
+
+export function loadAnonymousPlayHistory() {
+  return loadPlayHistory(ANONYMOUS_HISTORY_STORAGE_KEY);
 }
 
 function isPlayHistoryRecord(value: unknown): value is PlayHistoryRecord {

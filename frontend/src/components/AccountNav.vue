@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import type { CloudPreferences } from '../api/cloudSync';
-import type { PlayHistoryRecord } from '../history/playHistory';
 import { useAccountStore } from '../stores/accountStore';
 import { useGameSettingsStore } from '../stores/gameSettingsStore';
 import { useHistoryStore } from '../stores/historyStore';
+import {
+  clearActiveTrainingState,
+  loadAnonymousTrainingState,
+  mergeHistory,
+  mergePreferences,
+} from '../sync/localProfiles';
 
 const accountStore = useAccountStore();
 const settingsStore = useGameSettingsStore();
@@ -103,15 +107,14 @@ const handleOffline = () => {
   accountStore.markPendingSync();
 };
 
-watch(
-  () => accountStore.user?.id,
-  (userId) => {
-    if (userId) {
-      void syncCloudAndLocal();
-    }
-  },
-  { immediate: true },
-);
+const handleLogout = () => {
+  const anonymousState = loadAnonymousTrainingState();
+
+  accountStore.logout();
+  clearActiveTrainingState();
+  settingsStore.replaceFromCloud(anonymousState.gameSettings);
+  historyStore.replaceRecords(anonymousState.history);
+};
 
 watch(localSyncSnapshot, () => {
   scheduleSync();
@@ -120,6 +123,7 @@ watch(localSyncSnapshot, () => {
 onMounted(() => {
   window.addEventListener('online', handleOnline);
   window.addEventListener('offline', handleOffline);
+  void syncCloudAndLocal();
 });
 
 onBeforeUnmount(() => {
@@ -131,27 +135,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('offline', handleOffline);
 });
 
-function mergePreferences(
-  cloudPreferences: CloudPreferences,
-  localPreferences: CloudPreferences,
-): CloudPreferences {
-  return {
-    gameSettings: {
-      ...(cloudPreferences.gameSettings ?? {}),
-      ...(localPreferences.gameSettings ?? {}),
-    },
-  };
-}
-
-function mergeHistory(cloudHistory: PlayHistoryRecord[], localHistory: PlayHistoryRecord[]) {
-  const recordsById = new Map<string, PlayHistoryRecord>();
-
-  [...cloudHistory, ...localHistory].forEach((record) => {
-    recordsById.set(record.id, record);
-  });
-
-  return [...recordsById.values()].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
 </script>
 
 <template>
@@ -176,7 +159,7 @@ function mergeHistory(cloudHistory: PlayHistoryRecord[], localHistory: PlayHisto
       <button
         type="button"
         class="account-link"
-        @click="accountStore.logout"
+        @click="handleLogout"
       >
         Log out
       </button>

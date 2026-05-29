@@ -245,6 +245,44 @@ button {
   margin: 0;
 }
 
+.auth-choice {
+  border: 1px solid #d8dce3;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+}
+
+.auth-choice legend {
+  color: #20232a;
+  font-weight: 900;
+  padding: 0 6px;
+}
+
+.auth-choice p {
+  color: #5f6673;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.auth-choice label {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.auth-choice input {
+  min-height: auto;
+  width: auto;
+}
+
+.auth-choice label span {
+  color: #20232a;
+  font-size: 0.95rem;
+  text-transform: none;
+}
+
 .search-field {
   display: grid;
   gap: 8px;
