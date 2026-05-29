@@ -46,11 +46,8 @@ export const minigames: MinigameDefinition[] = [
   },
 ];
 
-export const skillAreas: ('All' | SkillArea)[] = [
-  'All',
-  'Visual Search',
-  'Reaction',
-  'Tracking',
-  'Memory',
-  'Coordination',
-];
+const registeredSkillAreas = Array.from(
+  new Set(minigames.map((minigame) => minigame.skillArea)),
+);
+
+export const skillAreas: ('All' | SkillArea)[] = ['All', ...registeredSkillAreas];
