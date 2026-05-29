@@ -6,10 +6,12 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends pkg-config libssl-dev ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
+RUN cargo install cargo-watch --locked
+
 COPY Cargo.toml Cargo.lock* ./
 COPY migrations ./migrations
 COPY src ./src
 
-RUN cargo build --release
+RUN cargo build
 
-CMD ["./target/release/neuro-visual-training-api"]
+CMD ["cargo", "watch", "-x", "run"]

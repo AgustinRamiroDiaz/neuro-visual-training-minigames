@@ -22,8 +22,13 @@ services:
       DATABASE_URL: postgres://neuro:neuro@postgres:5432/neuro_training
       ROCKET_ADDRESS: 0.0.0.0
       ROCKET_PORT: 8000
+      RUST_BACKTRACE: 1
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend-target:/app/target
+      - backend-cargo-cache:/usr/local/cargo/registry
     depends_on:
       postgres:
         condition: service_healthy
@@ -33,6 +38,8 @@ services:
       context: ./frontend
     environment:
       CHOKIDAR_USEPOLLING: "true"
+      CI: "true"
+      npm_config_confirm_modules_purge: "false"
       VITE_API_URL: http://localhost:8000/api
     ports:
       - "5173:5173"
@@ -44,4 +51,6 @@ services:
 
 volumes:
   postgres-data:
+  backend-cargo-cache:
+  backend-target:
   frontend-node-modules:

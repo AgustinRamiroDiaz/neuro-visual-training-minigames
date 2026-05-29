@@ -11,13 +11,14 @@ Keep the experience focused: users should quickly find a drill, understand what 
 ```bash
 pnpm --dir frontend install
 pnpm --dir frontend run dev
+pnpm --dir frontend run lint
 pnpm --dir frontend run build
 pnpm --dir frontend run preview
 cargo check --manifest-path backend/Cargo.toml
 docker compose up --build
 ```
 
-Use `pnpm --dir frontend run build` as the default frontend verification command after code changes. Use `cargo check --manifest-path backend/Cargo.toml` after backend changes.
+Use `pnpm --dir frontend run lint` and `pnpm --dir frontend run build` as the default frontend verification commands after code changes. Use `cargo check --manifest-path backend/Cargo.toml` after backend changes.
 
 ## Code Layout
 
