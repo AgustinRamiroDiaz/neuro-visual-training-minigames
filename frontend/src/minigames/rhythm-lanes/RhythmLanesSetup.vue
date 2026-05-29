@@ -135,19 +135,19 @@ const start = () => {
     >
       <div class="preset-column">
         <span>Presets</span>
-        <div
+        <ButtonGroup
           class="preset-group"
           aria-label="Built-in rhythm lane presets"
         >
-          <button
+          <Button
             v-for="preset in presets"
             :key="preset.label"
-            type="button"
+            :label="preset.label"
+            severity="secondary"
+            outlined
             @click="applyPreset(preset)"
-          >
-            {{ preset.label }}
-          </button>
-        </div>
+          />
+        </ButtonGroup>
       </div>
 
       <div
@@ -157,46 +157,45 @@ const start = () => {
       >
         <span>Saved</span>
         <div class="saved-preset-list">
-          <div
+          <ButtonGroup
             v-for="preset in userPresets"
             :key="preset.id"
             class="saved-preset"
           >
-            <button
-              type="button"
+            <Button
+              :label="preset.name"
+              text
+              severity="secondary"
               @click="applyPreset(preset.value)"
-            >
-              {{ preset.name }}
-            </button>
-            <button
-              type="button"
+            />
+            <Button
+              label="-"
               class="saved-preset-delete"
+              text
+              severity="danger"
               :aria-label="`Delete ${preset.name}`"
               @click="deletePreset(preset.id)"
-            >
-              -
-            </button>
-          </div>
+            />
+          </ButtonGroup>
         </div>
       </div>
 
       <label class="preset-save-field">
         <span>Save current</span>
-        <span class="preset-save-control">
-          <input
+        <InputGroup class="preset-save-control">
+          <InputText
             v-model="presetName"
             type="text"
             placeholder="Preset name"
-          >
-          <button
-            type="button"
-            class="secondary-button"
+          />
+          <Button
+            label="Save preset"
+            outlined
+            severity="secondary"
             :disabled="hasDuplicateKeys || !presetName.trim()"
             @click="saveCurrentPreset"
-          >
-            Save preset
-          </button>
-        </span>
+          />
+        </InputGroup>
       </label>
     </section>
 
@@ -204,22 +203,23 @@ const start = () => {
       class="lane-builder"
       aria-label="Rhythm lane order"
     >
-      <button
-        type="button"
+      <Button
+        label="+"
         class="lane-add-button"
+        severity="secondary"
+        rounded
+        outlined
         :disabled="!canAddLane"
         aria-label="Add lane at start"
         @click="addLane(0)"
-      >
-        +
-      </button>
+      />
 
       <template
         v-for="(key, index) in keys"
         :key="`${key}-${index}`"
       >
-        <article
-          class="lane-tile"
+        <Card
+          class="lane-card"
           :class="{ dragging: draggedIndex === index }"
           draggable="true"
           @dragstart="onDragStart(index, $event)"
@@ -227,61 +227,68 @@ const start = () => {
           @dragover.prevent
           @drop="onDrop(index)"
         >
-          <button
-            type="button"
-            class="lane-remove-button"
-            :disabled="!canRemoveLane"
-            :aria-label="`Remove ${key} lane`"
-            @click="removeLane(index)"
-          >
-            -
-          </button>
+          <template #title>
+            Lane {{ index + 1 }}
+          </template>
 
-          <label class="lane-key-picker">
-            <span class="sr-only">Key for lane {{ index + 1 }}</span>
-            <select
-              v-model="keys[index]"
-              @mousedown.stop
-              @dragstart.stop
-            >
-              <option
-                v-for="option in keyOptions"
-                :key="option"
-                :value="option"
-              >{{ option }}</option>
-            </select>
-          </label>
-          <span>Lane {{ index + 1 }}</span>
-        </article>
+          <template #subtitle>
+            Drag to reorder
+          </template>
 
-        <button
-          type="button"
+          <template #content>
+            <label class="lane-key-picker">
+              <span class="sr-only">Key for lane {{ index + 1 }}</span>
+              <Select
+                v-model="keys[index]"
+                :options="[...keyOptions]"
+                @mousedown.stop
+                @dragstart.stop
+              />
+            </label>
+          </template>
+
+          <template #footer>
+            <Button
+              label="Remove"
+              severity="danger"
+              outlined
+              fluid
+              :disabled="!canRemoveLane"
+              :aria-label="`Remove ${key} lane`"
+              @click="removeLane(index)"
+            />
+          </template>
+        </Card>
+
+        <Button
+          label="+"
           class="lane-add-button"
+          severity="secondary"
+          rounded
+          outlined
           :disabled="!canAddLane"
           :aria-label="`Add lane after ${key}`"
           @click="addLane(index + 1)"
-        >
-          +
-        </button>
+        />
       </template>
     </div>
 
-    <p
+    <Message
       v-if="hasDuplicateKeys"
       class="setup-error"
+      severity="error"
+      size="small"
+      icon="none"
     >
       Each rhythm lane needs a unique key.
-    </p>
+    </Message>
 
     <footer class="setup-actions">
-      <button
-        type="button"
-        class="start-button"
+      <Button
+        label="Start"
         :disabled="hasDuplicateKeys"
         @click="start"
-      >
-        Start
-      </button>
+      />
     </footer>
   </section>
 </template>

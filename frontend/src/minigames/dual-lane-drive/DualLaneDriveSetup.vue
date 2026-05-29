@@ -83,19 +83,19 @@ const start = () => {
     >
       <div class="preset-column">
         <span>Presets</span>
-        <div
+        <ButtonGroup
           class="preset-group"
           aria-label="Dual lane presets"
         >
-          <button
+          <Button
             v-for="preset in presets"
             :key="preset.label"
-            type="button"
+            :label="preset.label"
+            severity="secondary"
+            outlined
             @click="applyPreset(preset)"
-          >
-            {{ preset.label }}
-          </button>
-        </div>
+          />
+        </ButtonGroup>
       </div>
 
       <div
@@ -105,89 +105,82 @@ const start = () => {
       >
         <span>Saved</span>
         <div class="saved-preset-list">
-          <div
+          <ButtonGroup
             v-for="preset in userPresets"
             :key="preset.id"
             class="saved-preset"
           >
-            <button
-              type="button"
+            <Button
+              :label="preset.name"
+              text
+              severity="secondary"
               @click="applyPreset(preset.value)"
-            >
-              {{ preset.name }}
-            </button>
-            <button
-              type="button"
+            />
+            <Button
+              label="-"
               class="saved-preset-delete"
+              text
+              severity="danger"
               :aria-label="`Delete ${preset.name}`"
               @click="deletePreset(preset.id)"
-            >
-              -
-            </button>
-          </div>
+            />
+          </ButtonGroup>
         </div>
       </div>
 
       <label class="preset-save-field">
         <span>Save current</span>
-        <span class="preset-save-control">
-          <input
+        <InputGroup class="preset-save-control">
+          <InputText
             v-model="presetName"
             type="text"
             placeholder="Preset name"
-          >
-          <button
-            type="button"
-            class="secondary-button"
+          />
+          <Button
+            label="Save preset"
+            outlined
+            severity="secondary"
             :disabled="hasDuplicateKeys || !presetName.trim()"
             @click="saveCurrentPreset"
-          >
-            Save preset
-          </button>
-        </span>
+          />
+        </InputGroup>
       </label>
     </section>
 
     <div class="field-grid">
       <label>
         <span>Left car</span>
-        <select v-model="leftKey">
-          <option
-            v-for="key in keyOptions"
-            :key="key"
-            :value="key"
-          >{{ key }}</option>
-        </select>
+        <Select
+          v-model="leftKey"
+          :options="[...keyOptions]"
+        />
       </label>
 
       <label>
         <span>Right car</span>
-        <select v-model="rightKey">
-          <option
-            v-for="key in keyOptions"
-            :key="key"
-            :value="key"
-          >{{ key }}</option>
-        </select>
+        <Select
+          v-model="rightKey"
+          :options="[...keyOptions]"
+        />
       </label>
     </div>
 
-    <p
+    <Message
       v-if="hasDuplicateKeys"
       class="setup-error"
+      severity="error"
+      size="small"
+      icon="none"
     >
       Choose two different keys.
-    </p>
+    </Message>
 
     <footer class="setup-actions">
-      <button
-        type="button"
-        class="start-button"
+      <Button
+        label="Start"
         :disabled="hasDuplicateKeys"
         @click="start"
-      >
-        Start
-      </button>
+      />
     </footer>
   </section>
 </template>

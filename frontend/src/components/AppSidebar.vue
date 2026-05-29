@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { checkCloudHealth } from '../api/cloudSync';
 import { useAccountStore } from '../stores/accountStore';
 import { useCloudSync } from '../sync/useCloudSync';
 
+const route = useRoute();
 const accountStore = useAccountStore();
-const { logoutAndRestoreAnonymousState, syncClass, syncLabel } = useCloudSync();
+const { logoutAndRestoreAnonymousState, syncLabel } = useCloudSync();
 const cloudStatus = ref<'checking' | 'online' | 'offline'>('checking');
 const canShowAccountActions = computed(
   () => accountStore.user !== null || cloudStatus.value === 'online',
 );
+const syncSeverity = computed(() => {
+  if (accountStore.syncStatus === 'error' || accountStore.syncStatus === 'offline') {
+    return 'warn';
+  }
+
+  if (accountStore.syncStatus === 'syncing' || accountStore.pendingSync) {
+    return 'info';
+  }
+
+  return 'success';
+});
 
 const checkBackendConnection = async () => {
   if (accountStore.user) {
@@ -63,18 +76,20 @@ onBeforeUnmount(() => {
       class="sidebar-nav"
       aria-label="Views"
     >
-      <RouterLink
-        class="sidebar-link"
+      <Button
+        as="router-link"
+        label="Minigames"
         to="/"
-      >
-        Minigames
-      </RouterLink>
-      <RouterLink
-        class="sidebar-link"
+        :outlined="route.name !== 'catalog'"
+        severity="secondary"
+      />
+      <Button
+        as="router-link"
+        label="History"
         to="/history"
-      >
-        History
-      </RouterLink>
+        :outlined="route.name !== 'history'"
+        severity="secondary"
+      />
     </nav>
 
     <nav
@@ -82,67 +97,58 @@ onBeforeUnmount(() => {
       aria-label="Account"
     >
       <template v-if="accountStore.user">
-        <span class="account-name">{{ accountStore.user.username }}</span>
-        <span
+        <Tag
+          class="account-name"
+          :value="accountStore.user.username"
+          severity="contrast"
+        />
+        <Badge
           class="sync-indicator"
-          :class="syncClass"
+          :value="syncLabel"
           :title="syncLabel"
+          :severity="syncSeverity"
           aria-live="polite"
-        >
-          <span
-            class="sync-dot"
-            aria-hidden="true"
-          />
-          {{ syncLabel }}
-        </span>
-        <button
-          type="button"
-          class="account-link"
+        />
+        <Button
+          label="Log out"
+          class="account-action"
+          outlined
           @click="logoutAndRestoreAnonymousState"
-        >
-          Log out
-        </button>
+        />
       </template>
 
       <template v-else-if="canShowAccountActions">
-        <RouterLink
-          class="account-link"
+        <Button
+          as="router-link"
+          label="Log in"
           to="/login"
-        >
-          Log in
-        </RouterLink>
-        <RouterLink
-          class="account-primary"
+          class="account-action"
+          outlined
+        />
+        <Button
+          as="router-link"
+          label="Register"
           to="/register"
-        >
-          Register
-        </RouterLink>
+          class="account-action"
+        />
       </template>
 
-      <p
+      <Tag
         v-else-if="cloudStatus === 'checking'"
-        class="cloud-checking"
+        class="cloud-status"
+        value="Checking cloud"
+        severity="secondary"
         aria-live="polite"
-      >
-        <span
-          class="sync-dot"
-          aria-hidden="true"
-        />
-        Checking cloud
-      </p>
+      />
 
-      <p
+      <Tag
         v-else
-        class="cloud-unavailable"
+        v-tooltip.top="'Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames.'"
+        class="cloud-status"
+        value="Cloud unavailable"
+        severity="warn"
         tabindex="0"
-        title="Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames."
-      >
-        <span
-          class="sync-dot"
-          aria-hidden="true"
-        />
-        Cloud unavailable
-      </p>
+      />
     </nav>
   </aside>
 </template>

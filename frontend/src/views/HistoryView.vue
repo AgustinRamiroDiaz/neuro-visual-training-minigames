@@ -47,45 +47,60 @@ const formatMetadataValue = (value: PlayMetadataValue): string => {
       </div>
     </header>
 
-    <section
+    <DataTable
       v-if="historyStore.records.length > 0"
+      :value="historyStore.records"
       class="history-list"
       aria-label="Play history"
+      data-key="id"
+      striped-rows
+      size="small"
     >
-      <article
-        v-for="record in historyStore.records"
-        :key="record.id"
-        class="history-record"
+      <Column
+        field="timestamp"
+        header="Played"
+        sortable
       >
-        <div>
-          <p class="card-meta">
-            {{ formatTimestamp(record.timestamp) }}
-          </p>
-          <h2>{{ record.gameName }}</h2>
-          <span>{{ record.gameId }}</span>
-        </div>
+        <template #body="{ data }: { data: PlayHistoryRecord }">
+          <span class="card-meta">{{ formatTimestamp(data.timestamp) }}</span>
+        </template>
+      </Column>
 
-        <dl
-          v-if="getMetadataEntries(record).length > 0"
-          class="history-metadata"
-        >
-          <template
-            v-for="[key, value] in getMetadataEntries(record)"
-            :key="key"
+      <Column
+        field="gameName"
+        header="Minigame"
+        sortable
+      >
+        <template #body="{ data }: { data: PlayHistoryRecord }">
+          <strong class="history-game-name">{{ data.gameName }}</strong>
+          <span class="history-game-id">{{ data.gameId }}</span>
+        </template>
+      </Column>
+
+      <Column header="Metrics">
+        <template #body="{ data }: { data: PlayHistoryRecord }">
+          <dl
+            v-if="getMetadataEntries(data).length > 0"
+            class="history-metadata"
           >
-            <dt>{{ formatMetadataLabel(key) }}</dt>
-            <dd>{{ formatMetadataValue(value) }}</dd>
-          </template>
-        </dl>
+            <template
+              v-for="[key, value] in getMetadataEntries(data)"
+              :key="key"
+            >
+              <dt>{{ formatMetadataLabel(key) }}</dt>
+              <dd>{{ formatMetadataValue(value) }}</dd>
+            </template>
+          </dl>
 
-        <p
-          v-else
-          class="history-empty-metadata"
-        >
-          No session metrics recorded.
-        </p>
-      </article>
-    </section>
+          <span
+            v-else
+            class="history-empty-metadata"
+          >
+            No session metrics recorded.
+          </span>
+        </template>
+      </Column>
+    </DataTable>
 
     <p
       v-else

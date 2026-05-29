@@ -31,13 +31,29 @@ const formatLastPlayed = (timestamp: string) => {
     type="button"
     @click="$emit('select', minigame)"
   >
-    <PreviewMark :minigame="minigame" />
-    <span class="card-meta">{{ minigame.skillArea }} / {{ minigame.duration }}</span>
-    <strong>{{ minigame.title }}</strong>
-    <span>{{ minigame.summary }}</span>
-    <span class="game-card-footer">
-      <small>{{ minigame.difficulty }}</small>
-      <small>{{ lastPlayed ? `Last played ${formatLastPlayed(lastPlayed)}` : 'Not played yet' }}</small>
-    </span>
+    <Card>
+      <template #header>
+        <PreviewMark :minigame="minigame" />
+      </template>
+
+      <template #title>
+        {{ minigame.title }}
+      </template>
+
+      <template #subtitle>
+        {{ minigame.skillArea }} / {{ minigame.duration }}
+      </template>
+
+      <template #content>
+        <p>{{ minigame.summary }}</p>
+      </template>
+
+      <template #footer>
+        <span class="game-card-footer">
+          <small>{{ minigame.difficulty }}</small>
+          <small>{{ lastPlayed ? `Last played ${formatLastPlayed(lastPlayed)}` : 'Not played yet' }}</small>
+        </span>
+      </template>
+    </Card>
   </button>
 </template>
