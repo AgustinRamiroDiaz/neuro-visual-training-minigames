@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
         v-else
         class="cloud-unavailable"
         tabindex="0"
-        title="Cloud save requires the Rocket backend to be running and reachable. This client-only app still works locally, but login and register are hidden until the backend is available."
+        title="Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames."
       >
         <span
           class="sync-dot"
