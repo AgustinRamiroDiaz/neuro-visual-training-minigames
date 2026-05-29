@@ -30,6 +30,11 @@ The frontend keeps shared state in Pinia stores:
   - Contains profile-level helpers for anonymous backups, active account cleanup, and merge behavior.
   - Keeps login/logout storage policy out of unrelated views.
 
+- `frontend/src/sync/useCloudSync.ts`
+  - Owns background sync lifecycle work: local state watches, debounce timing, online/offline events, and cloud/local merging.
+  - Mounted once from `frontend/src/App.vue`.
+  - Exposes sync display state and logout cleanup behavior for `AccountNav.vue`.
+
 The active app always reads and writes the normal history/settings local storage keys while the user plays. The anonymous profile is kept in separate backup keys:
 
 - `neuro-visual-training-play-history:anonymous`
@@ -86,7 +91,7 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
    - If the user chose not to upload, cloud progress replaces the active local history/settings.
 
 5. Background sync
-   - `AccountNav.vue` watches local settings and history.
+   - `useCloudSync` watches local settings and history.
    - When local data changes, the app schedules a background sync.
    - Frontend sends local settings with `PUT /api/users/:userId/preferences`.
    - Frontend sends local history with `PUT /api/users/:userId/history`.
@@ -106,7 +111,7 @@ Schema lives in `backend/migrations/20260528190000_initial_schema.sql`:
 8. Offline and retry
    - If the backend is unavailable or the browser is offline, local storage remains the source of truth.
    - The account store marks the sync as pending/offline.
-   - When the browser comes back online, `AccountNav.vue` retries sync automatically.
+   - When the browser comes back online, `useCloudSync` retries sync automatically.
 
 9. Logout
    - The app forgets the active account reference.
