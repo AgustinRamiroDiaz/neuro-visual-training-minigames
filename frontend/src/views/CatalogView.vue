@@ -53,28 +53,20 @@ const configureGame = (game: MinigameDefinition) => {
     >
       <label class="search-field">
         <span>Search</span>
-        <input
+        <InputText
           v-model="search"
           type="search"
           placeholder="Try reaction, tracking, memory..."
-        >
+        />
       </label>
 
-      <div
+      <SelectButton
+        v-model="activeSkill"
+        :options="[...skillAreas]"
         class="skill-filter"
-        role="list"
+        :allow-empty="false"
         aria-label="Skill area"
-      >
-        <button
-          v-for="skill in skillAreas"
-          :key="skill"
-          type="button"
-          :class="{ active: activeSkill === skill }"
-          @click="activeSkill = skill"
-        >
-          {{ skill }}
-        </button>
-      </div>
+      />
     </section>
 
     <section

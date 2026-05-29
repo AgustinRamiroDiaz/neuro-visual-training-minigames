@@ -119,21 +119,21 @@ function applySyncedState(preferences: CloudPreferences, history: typeof history
     >
       <label>
         <span>Username</span>
-        <input
+        <InputText
           v-model="username"
           type="text"
           autocomplete="username"
           required
-        >
+        />
       </label>
 
       <label v-if="isRegister">
         <span>Display name</span>
-        <input
+        <InputText
           v-model="displayName"
           type="text"
           autocomplete="name"
-        >
+        />
       </label>
 
       <p class="auth-note">
@@ -150,52 +150,53 @@ function applySyncedState(preferences: CloudPreferences, history: typeof history
           choose what happens for this account.
         </p>
         <label>
-          <input
+          <RadioButton
             v-model="uploadLocalState"
-            type="radio"
+            input-id="upload-local-state"
             :value="true"
-          >
-          <span>Upload and merge with the account</span>
+          />
+          <span>
+            Upload and merge with the account
+          </span>
         </label>
         <label>
-          <input
+          <RadioButton
             v-model="uploadLocalState"
-            type="radio"
+            input-id="skip-local-state"
             :value="false"
-          >
+          />
           <span>{{ skipLocalStateLabel }}</span>
         </label>
       </fieldset>
 
-      <p
+      <Message
         v-if="accountStore.syncError"
-        class="setup-error"
+        severity="error"
+        size="small"
       >
         {{ accountStore.syncError }}
-      </p>
+      </Message>
 
       <footer class="setup-actions">
-        <RouterLink
+        <Button
           v-if="isRegister"
-          class="secondary-button"
+          as="router-link"
+          label="Log in instead"
           to="/login"
-        >
-          Log in instead
-        </RouterLink>
-        <RouterLink
+          outlined
+        />
+        <Button
           v-else
-          class="secondary-button"
+          as="router-link"
+          label="Register instead"
           to="/register"
-        >
-          Register instead
-        </RouterLink>
-        <button
+          outlined
+        />
+        <Button
           type="submit"
-          class="start-button"
+          :label="submitLabel"
           :disabled="!username.trim() || accountStore.syncStatus === 'syncing'"
-        >
-          {{ submitLabel }}
-        </button>
+        />
       </footer>
     </form>
   </section>

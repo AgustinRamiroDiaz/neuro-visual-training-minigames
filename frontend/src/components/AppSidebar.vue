@@ -83,66 +83,60 @@ onBeforeUnmount(() => {
     >
       <template v-if="accountStore.user">
         <span class="account-name">{{ accountStore.user.username }}</span>
-        <span
+        <Badge
           class="sync-indicator"
           :class="syncClass"
+          :value="syncLabel"
           :title="syncLabel"
+          severity="secondary"
           aria-live="polite"
-        >
-          <span
-            class="sync-dot"
-            aria-hidden="true"
-          />
-          {{ syncLabel }}
-        </span>
-        <button
-          type="button"
-          class="account-link"
+        />
+        <Button
+          label="Log out"
+          class="account-action"
+          outlined
           @click="logoutAndRestoreAnonymousState"
-        >
-          Log out
-        </button>
+        />
       </template>
 
       <template v-else-if="canShowAccountActions">
-        <RouterLink
-          class="account-link"
+        <Button
+          as="router-link"
+          label="Log in"
           to="/login"
-        >
-          Log in
-        </RouterLink>
-        <RouterLink
-          class="account-primary"
+          class="account-action"
+          outlined
+        />
+        <Button
+          as="router-link"
+          label="Register"
           to="/register"
-        >
-          Register
-        </RouterLink>
+          class="account-action"
+        />
       </template>
 
-      <p
+      <Message
         v-else-if="cloudStatus === 'checking'"
         class="cloud-checking"
+        severity="secondary"
+        size="small"
+        icon="none"
         aria-live="polite"
       >
-        <span
-          class="sync-dot"
-          aria-hidden="true"
-        />
         Checking cloud
-      </p>
+      </Message>
 
-      <p
+      <Message
         v-else
         class="cloud-unavailable"
+        severity="warn"
+        size="small"
+        icon="none"
         tabindex="0"
         title="Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames."
       >
-        <span
-          class="sync-dot"
-          aria-hidden="true"
-        />
         Cloud unavailable
-      </p>
+      </Message>
     </nav>
   </aside>
 </template>

@@ -139,14 +139,14 @@ const start = () => {
           class="preset-group"
           aria-label="Built-in rhythm lane presets"
         >
-          <button
+          <Button
             v-for="preset in presets"
             :key="preset.label"
-            type="button"
+            :label="preset.label"
+            severity="secondary"
+            outlined
             @click="applyPreset(preset)"
-          >
-            {{ preset.label }}
-          </button>
+          />
         </div>
       </div>
 
@@ -162,20 +162,20 @@ const start = () => {
             :key="preset.id"
             class="saved-preset"
           >
-            <button
-              type="button"
+            <Button
+              :label="preset.name"
+              text
+              severity="secondary"
               @click="applyPreset(preset.value)"
-            >
-              {{ preset.name }}
-            </button>
-            <button
-              type="button"
+            />
+            <Button
+              label="-"
               class="saved-preset-delete"
+              text
+              severity="danger"
               :aria-label="`Delete ${preset.name}`"
               @click="deletePreset(preset.id)"
-            >
-              -
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -183,19 +183,18 @@ const start = () => {
       <label class="preset-save-field">
         <span>Save current</span>
         <span class="preset-save-control">
-          <input
+          <InputText
             v-model="presetName"
             type="text"
             placeholder="Preset name"
-          >
-          <button
-            type="button"
-            class="secondary-button"
+          />
+          <Button
+            label="Save preset"
+            outlined
+            severity="secondary"
             :disabled="hasDuplicateKeys || !presetName.trim()"
             @click="saveCurrentPreset"
-          >
-            Save preset
-          </button>
+          />
         </span>
       </label>
     </section>
@@ -204,15 +203,16 @@ const start = () => {
       class="lane-builder"
       aria-label="Rhythm lane order"
     >
-      <button
-        type="button"
+      <Button
+        label="+"
         class="lane-add-button"
+        severity="secondary"
+        rounded
+        outlined
         :disabled="!canAddLane"
         aria-label="Add lane at start"
         @click="addLane(0)"
-      >
-        +
-      </button>
+      />
 
       <template
         v-for="(key, index) in keys"
@@ -227,42 +227,39 @@ const start = () => {
           @dragover.prevent
           @drop="onDrop(index)"
         >
-          <button
-            type="button"
+          <Button
+            label="-"
             class="lane-remove-button"
+            severity="danger"
+            rounded
+            outlined
             :disabled="!canRemoveLane"
             :aria-label="`Remove ${key} lane`"
             @click="removeLane(index)"
-          >
-            -
-          </button>
+          />
 
           <label class="lane-key-picker">
             <span class="sr-only">Key for lane {{ index + 1 }}</span>
-            <select
+            <Select
               v-model="keys[index]"
+              :options="[...keyOptions]"
               @mousedown.stop
               @dragstart.stop
-            >
-              <option
-                v-for="option in keyOptions"
-                :key="option"
-                :value="option"
-              >{{ option }}</option>
-            </select>
+            />
           </label>
           <span>Lane {{ index + 1 }}</span>
         </article>
 
-        <button
-          type="button"
+        <Button
+          label="+"
           class="lane-add-button"
+          severity="secondary"
+          rounded
+          outlined
           :disabled="!canAddLane"
           :aria-label="`Add lane after ${key}`"
           @click="addLane(index + 1)"
-        >
-          +
-        </button>
+        />
       </template>
     </div>
 
@@ -274,14 +271,11 @@ const start = () => {
     </p>
 
     <footer class="setup-actions">
-      <button
-        type="button"
-        class="start-button"
+      <Button
+        label="Start"
         :disabled="hasDuplicateKeys"
         @click="start"
-      >
-        Start
-      </button>
+      />
     </footer>
   </section>
 </template>
