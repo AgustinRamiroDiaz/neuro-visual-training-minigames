@@ -1,0 +1,30 @@
+{
+  "name": "neuro-visual-training-minigames",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --max-warnings=0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "phaser": "^4.1.0",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.35",
+    "vue-router": "^5.0.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.9.1",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "eslint": "^10.4.0",
+    "eslint-plugin-vue": "^10.9.1",
+    "globals": "^17.6.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.0",
+    "vite": "^8.0.14",
+    "vue-eslint-parser": "^10.4.0"
+  }
+}

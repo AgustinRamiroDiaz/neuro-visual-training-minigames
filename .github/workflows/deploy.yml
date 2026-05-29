@@ -33,14 +33,17 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
+        working-directory: frontend
         run: pnpm install --frozen-lockfile
 
       - name: Build
+        working-directory: frontend
         run: pnpm run build
         env:
           BASE_PATH: /neuro-visual-training-minigames/
@@ -48,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: frontend/dist
 
   deploy:
     environment:
