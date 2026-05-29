@@ -26,6 +26,9 @@ The frontend keeps shared state in Pinia stores:
   - Stores the optional cloud account id and sync status.
   - Calls backend sync helpers in `frontend/src/api/cloudSync.ts`.
 
+- `frontend/src/api/cloudSync.ts`
+  - Backend API client for account, preference, history, combined sync, and health-check requests.
+
 - `frontend/src/sync/localProfiles.ts`
   - Contains profile-level helpers for anonymous backups, active account cleanup, and merge behavior.
   - Keeps login/logout storage policy out of unrelated views.
@@ -41,6 +44,8 @@ The active app always reads and writes the normal history/settings local storage
 - `neuro-visual-training-game-settings:anonymous`
 
 When a user logs in or registers, the current active local state is copied into those anonymous backup keys before the account state is applied. That lets the app restore anonymous progress later, even after the active local storage has been replaced by account data.
+
+When no user is signed in, the sidebar checks `GET /api/health` before showing Login/Register. If the backend cannot be reached, the app keeps local play fully available and shows a small cloud-unavailable banner instead of account actions. This is useful for client-only deployments where the cloud save feature exists but the Rocket backend has not been hosted.
 
 ## Backend Storage
 

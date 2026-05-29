@@ -1,9 +1,50 @@
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { checkCloudHealth } from '../api/cloudSync';
 import { useAccountStore } from '../stores/accountStore';
 import { useCloudSync } from '../sync/useCloudSync';
 
 const accountStore = useAccountStore();
 const { logoutAndRestoreAnonymousState, syncClass, syncLabel } = useCloudSync();
+const cloudStatus = ref<'checking' | 'online' | 'offline'>('checking');
+const canShowAccountActions = computed(
+  () => accountStore.user !== null || cloudStatus.value === 'online',
+);
+
+const checkBackendConnection = async () => {
+  if (accountStore.user) {
+    return;
+  }
+
+  if (!navigator.onLine) {
+    cloudStatus.value = 'offline';
+    return;
+  }
+
+  cloudStatus.value = 'checking';
+  cloudStatus.value = (await checkCloudHealth()) ? 'online' : 'offline';
+};
+
+const handleOnline = () => {
+  void checkBackendConnection();
+};
+
+const handleOffline = () => {
+  if (!accountStore.user) {
+    cloudStatus.value = 'offline';
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
+  void checkBackendConnection();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('online', handleOnline);
+  window.removeEventListener('offline', handleOffline);
+});
 </script>
 
 <template>
@@ -63,7 +104,7 @@ const { logoutAndRestoreAnonymousState, syncClass, syncLabel } = useCloudSync();
         </button>
       </template>
 
-      <template v-else>
+      <template v-else-if="canShowAccountActions">
         <RouterLink
           class="account-link"
           to="/login"
@@ -77,6 +118,31 @@ const { logoutAndRestoreAnonymousState, syncClass, syncLabel } = useCloudSync();
           Register
         </RouterLink>
       </template>
+
+      <p
+        v-else-if="cloudStatus === 'checking'"
+        class="cloud-checking"
+        aria-live="polite"
+      >
+        <span
+          class="sync-dot"
+          aria-hidden="true"
+        />
+        Checking cloud
+      </p>
+
+      <p
+        v-else
+        class="cloud-unavailable"
+        tabindex="0"
+        title="Cloud save requires the Rocket backend to be running and reachable. This client-only app still works locally, but login and register are hidden until the backend is available."
+      >
+        <span
+          class="sync-dot"
+          aria-hidden="true"
+        />
+        Cloud unavailable
+      </p>
     </nav>
   </aside>
 </template>

@@ -47,6 +47,28 @@ export async function loginCloudUser(username: string) {
   });
 }
 
+export async function checkCloudHealth() {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => {
+    controller.abort();
+  }, 2500);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      headers: {
+        Accept: 'application/json',
+      },
+      signal: controller.signal,
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
 export async function saveCloudPreferences(userId: string, preferences: CloudPreferences) {
   return request(`/users/${userId}/preferences`, {
     method: 'PUT',
