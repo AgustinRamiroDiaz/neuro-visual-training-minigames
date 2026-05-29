@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { checkCloudHealth } from '../api/cloudSync';
 import { useAccountStore } from '../stores/accountStore';
 import { useCloudSync } from '../sync/useCloudSync';
 
+const route = useRoute();
 const accountStore = useAccountStore();
-const { logoutAndRestoreAnonymousState, syncClass, syncLabel } = useCloudSync();
+const { logoutAndRestoreAnonymousState, syncLabel } = useCloudSync();
 const cloudStatus = ref<'checking' | 'online' | 'offline'>('checking');
 const canShowAccountActions = computed(
   () => accountStore.user !== null || cloudStatus.value === 'online',
 );
+const syncSeverity = computed(() => {
+  if (accountStore.syncStatus === 'error' || accountStore.syncStatus === 'offline') {
+    return 'warn';
+  }
+
+  if (accountStore.syncStatus === 'syncing' || accountStore.pendingSync) {
+    return 'info';
+  }
+
+  return 'success';
+});
 
 const checkBackendConnection = async () => {
   if (accountStore.user) {
@@ -63,18 +76,20 @@ onBeforeUnmount(() => {
       class="sidebar-nav"
       aria-label="Views"
     >
-      <RouterLink
-        class="sidebar-link"
+      <Button
+        as="router-link"
+        label="Minigames"
         to="/"
-      >
-        Minigames
-      </RouterLink>
-      <RouterLink
-        class="sidebar-link"
+        :outlined="route.name !== 'catalog'"
+        severity="secondary"
+      />
+      <Button
+        as="router-link"
+        label="History"
         to="/history"
-      >
-        History
-      </RouterLink>
+        :outlined="route.name !== 'history'"
+        severity="secondary"
+      />
     </nav>
 
     <nav
@@ -89,10 +104,9 @@ onBeforeUnmount(() => {
         />
         <Badge
           class="sync-indicator"
-          :class="syncClass"
           :value="syncLabel"
           :title="syncLabel"
-          severity="secondary"
+          :severity="syncSeverity"
           aria-live="polite"
         />
         <Button
@@ -119,28 +133,22 @@ onBeforeUnmount(() => {
         />
       </template>
 
-      <Message
+      <Tag
         v-else-if="cloudStatus === 'checking'"
-        class="cloud-checking"
+        class="cloud-status"
+        value="Checking cloud"
         severity="secondary"
-        size="small"
-        icon="none"
         aria-live="polite"
-      >
-        Checking cloud
-      </Message>
+      />
 
-      <Message
+      <Tag
         v-else
         v-tooltip.top="'Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames.'"
-        class="cloud-unavailable"
+        class="cloud-status"
+        value="Cloud unavailable"
         severity="warn"
-        size="small"
-        icon="none"
         tabindex="0"
-      >
-        Cloud unavailable
-      </Message>
+      />
     </nav>
   </aside>
 </template>
