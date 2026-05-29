@@ -37,40 +37,76 @@ const submit = async () => {
     }
   }
 
-  router.push({ name: 'catalog' });
+  void router.push({ name: 'catalog' });
 };
 </script>
 
 <template>
   <section class="auth-view">
     <header class="play-header">
-      <RouterLink class="back-button" to="/">Catalog</RouterLink>
+      <RouterLink
+        class="back-button"
+        to="/"
+      >
+        Catalog
+      </RouterLink>
       <div>
-        <p class="eyebrow">Cloud Save</p>
+        <p class="eyebrow">
+          Cloud Save
+        </p>
         <h1>{{ title }}</h1>
       </div>
     </header>
 
-    <form class="auth-panel" @submit.prevent="submit">
+    <form
+      class="auth-panel"
+      @submit.prevent="submit"
+    >
       <label>
         <span>Username</span>
-        <input v-model="username" type="text" autocomplete="username" required />
+        <input
+          v-model="username"
+          type="text"
+          autocomplete="username"
+          required
+        >
       </label>
 
       <label v-if="isRegister">
         <span>Display name</span>
-        <input v-model="displayName" type="text" autocomplete="name" />
+        <input
+          v-model="displayName"
+          type="text"
+          autocomplete="name"
+        >
       </label>
 
       <p class="auth-note">
         Accounts are currently username-based for cloud save development.
       </p>
 
-      <p v-if="accountStore.syncError" class="setup-error">{{ accountStore.syncError }}</p>
+      <p
+        v-if="accountStore.syncError"
+        class="setup-error"
+      >
+        {{ accountStore.syncError }}
+      </p>
 
       <footer class="setup-actions">
-        <RouterLink v-if="isRegister" class="secondary-button" to="/login">Log in instead</RouterLink>
-        <RouterLink v-else class="secondary-button" to="/register">Register instead</RouterLink>
+        <RouterLink
+          v-if="isRegister"
+          class="secondary-button"
+          to="/login"
+        >
+          Log in instead
+        </RouterLink>
+        <RouterLink
+          v-else
+          class="secondary-button"
+          to="/register"
+        >
+          Register instead
+        </RouterLink>
         <button
           type="submit"
           class="start-button"

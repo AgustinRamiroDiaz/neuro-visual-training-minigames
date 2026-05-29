@@ -26,7 +26,7 @@ const filteredGames = computed(() => {
 });
 
 const configureGame = (game: MinigameDefinition) => {
-  router.push({ name: 'game-setup', params: { gameId: game.id } });
+  void router.push({ name: 'game-setup', params: { gameId: game.id } });
 };
 </script>
 
@@ -34,7 +34,9 @@ const configureGame = (game: MinigameDefinition) => {
   <section class="catalog-view">
     <header class="catalog-header">
       <div>
-        <p class="eyebrow">Neuro Visual Training</p>
+        <p class="eyebrow">
+          Neuro Visual Training
+        </p>
         <h1>Choose a focused visual skill drill.</h1>
       </div>
       <div class="catalog-summary">
@@ -42,19 +44,33 @@ const configureGame = (game: MinigameDefinition) => {
           Search the catalog, filter by skill area, then launch a Phaser-powered
           minigame session.
         </p>
-        <RouterLink class="back-button" to="/history">
+        <RouterLink
+          class="back-button"
+          to="/history"
+        >
           History {{ historyStore.count }}
         </RouterLink>
       </div>
     </header>
 
-    <section class="toolbar" aria-label="Minigame filters">
+    <section
+      class="toolbar"
+      aria-label="Minigame filters"
+    >
       <label class="search-field">
         <span>Search</span>
-        <input v-model="search" type="search" placeholder="Try reaction, tracking, memory..." />
+        <input
+          v-model="search"
+          type="search"
+          placeholder="Try reaction, tracking, memory..."
+        >
       </label>
 
-      <div class="skill-filter" role="list" aria-label="Skill area">
+      <div
+        class="skill-filter"
+        role="list"
+        aria-label="Skill area"
+      >
         <button
           v-for="skill in skillAreas"
           :key="skill"
@@ -67,7 +83,10 @@ const configureGame = (game: MinigameDefinition) => {
       </div>
     </section>
 
-    <section class="game-grid" aria-label="Available minigames">
+    <section
+      class="game-grid"
+      aria-label="Available minigames"
+    >
       <GameCard
         v-for="game in filteredGames"
         :key="game.id"
@@ -76,7 +95,10 @@ const configureGame = (game: MinigameDefinition) => {
         @select="configureGame"
       />
 
-      <p v-if="filteredGames.length === 0" class="empty-state">
+      <p
+        v-if="filteredGames.length === 0"
+        class="empty-state"
+      >
         No minigames match that search.
       </p>
     </section>

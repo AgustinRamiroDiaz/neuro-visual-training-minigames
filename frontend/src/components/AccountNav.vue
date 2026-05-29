@@ -55,12 +55,12 @@ const scheduleSync = () => {
 
   syncTimer.value = window.setTimeout(() => {
     syncTimer.value = null;
-    pushLocalToCloud();
+    void pushLocalToCloud();
   }, 900);
 };
 
-const pushLocalToCloud = () => {
-  accountStore.saveToCloud(settingsStore.getCloudPreferences(), historyStore.records);
+const pushLocalToCloud = async () => {
+  await accountStore.saveToCloud(settingsStore.getCloudPreferences(), historyStore.records);
 };
 
 const syncCloudAndLocal = async () => {
@@ -96,7 +96,7 @@ const syncCloudAndLocal = async () => {
 };
 
 const handleOnline = () => {
-  syncCloudAndLocal();
+  void syncCloudAndLocal();
 };
 
 const handleOffline = () => {
@@ -107,7 +107,7 @@ watch(
   () => accountStore.user?.id,
   (userId) => {
     if (userId) {
-      syncCloudAndLocal();
+      void syncCloudAndLocal();
     }
   },
   { immediate: true },
@@ -155,19 +155,46 @@ function mergeHistory(cloudHistory: PlayHistoryRecord[], localHistory: PlayHisto
 </script>
 
 <template>
-  <nav class="account-nav" aria-label="Account">
+  <nav
+    class="account-nav"
+    aria-label="Account"
+  >
     <template v-if="accountStore.user">
       <span class="account-name">{{ accountStore.user.username }}</span>
-      <span class="sync-indicator" :class="syncClass" :title="syncLabel" aria-live="polite">
-        <span class="sync-dot" aria-hidden="true" />
+      <span
+        class="sync-indicator"
+        :class="syncClass"
+        :title="syncLabel"
+        aria-live="polite"
+      >
+        <span
+          class="sync-dot"
+          aria-hidden="true"
+        />
         {{ syncLabel }}
       </span>
-      <button type="button" class="account-link" @click="accountStore.logout">Log out</button>
+      <button
+        type="button"
+        class="account-link"
+        @click="accountStore.logout"
+      >
+        Log out
+      </button>
     </template>
 
     <template v-else>
-      <RouterLink class="account-link" to="/login">Log in</RouterLink>
-      <RouterLink class="account-primary" to="/register">Register</RouterLink>
+      <RouterLink
+        class="account-link"
+        to="/login"
+      >
+        Log in
+      </RouterLink>
+      <RouterLink
+        class="account-primary"
+        to="/register"
+      >
+        Register
+      </RouterLink>
     </template>
   </nav>
 </template>

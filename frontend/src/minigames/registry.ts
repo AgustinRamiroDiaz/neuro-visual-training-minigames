@@ -46,7 +46,7 @@ export const minigames: MinigameDefinition[] = [
   },
 ];
 
-export const skillAreas: Array<'All' | SkillArea> = [
+export const skillAreas: ('All' | SkillArea)[] = [
   'All',
   'Visual Search',
   'Reaction',

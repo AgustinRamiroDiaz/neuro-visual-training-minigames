@@ -118,7 +118,10 @@ const start = () => {
 </script>
 
 <template>
-  <section class="setup-panel" aria-label="Rhythm Lanes setup">
+  <section
+    class="setup-panel"
+    aria-label="Rhythm Lanes setup"
+  >
     <div class="setup-row">
       <div>
         <h2>Instrument lanes</h2>
@@ -126,10 +129,16 @@ const start = () => {
       </div>
     </div>
 
-    <section class="preset-panel" aria-label="Rhythm lane presets">
+    <section
+      class="preset-panel"
+      aria-label="Rhythm lane presets"
+    >
       <div class="preset-column">
         <span>Presets</span>
-        <div class="preset-group" aria-label="Built-in rhythm lane presets">
+        <div
+          class="preset-group"
+          aria-label="Built-in rhythm lane presets"
+        >
           <button
             v-for="preset in presets"
             :key="preset.label"
@@ -141,11 +150,22 @@ const start = () => {
         </div>
       </div>
 
-      <div v-if="userPresets.length > 0" class="preset-column" aria-label="Saved presets">
+      <div
+        v-if="userPresets.length > 0"
+        class="preset-column"
+        aria-label="Saved presets"
+      >
         <span>Saved</span>
         <div class="saved-preset-list">
-          <div v-for="preset in userPresets" :key="preset.id" class="saved-preset">
-            <button type="button" @click="applyPreset(preset.value)">
+          <div
+            v-for="preset in userPresets"
+            :key="preset.id"
+            class="saved-preset"
+          >
+            <button
+              type="button"
+              @click="applyPreset(preset.value)"
+            >
               {{ preset.name }}
             </button>
             <button
@@ -163,7 +183,11 @@ const start = () => {
       <label class="preset-save-field">
         <span>Save current</span>
         <span class="preset-save-control">
-          <input v-model="presetName" type="text" placeholder="Preset name" />
+          <input
+            v-model="presetName"
+            type="text"
+            placeholder="Preset name"
+          >
           <button
             type="button"
             class="secondary-button"
@@ -176,7 +200,10 @@ const start = () => {
       </label>
     </section>
 
-    <div class="lane-builder" aria-label="Rhythm lane order">
+    <div
+      class="lane-builder"
+      aria-label="Rhythm lane order"
+    >
       <button
         type="button"
         class="lane-add-button"
@@ -187,7 +214,10 @@ const start = () => {
         +
       </button>
 
-      <template v-for="(key, index) in keys" :key="`${key}-${index}`">
+      <template
+        v-for="(key, index) in keys"
+        :key="`${key}-${index}`"
+      >
         <article
           class="lane-tile"
           :class="{ dragging: draggedIndex === index }"
@@ -209,8 +239,16 @@ const start = () => {
 
           <label class="lane-key-picker">
             <span class="sr-only">Key for lane {{ index + 1 }}</span>
-            <select v-model="keys[index]" @mousedown.stop @dragstart.stop>
-              <option v-for="option in keyOptions" :key="option" :value="option">{{ option }}</option>
+            <select
+              v-model="keys[index]"
+              @mousedown.stop
+              @dragstart.stop
+            >
+              <option
+                v-for="option in keyOptions"
+                :key="option"
+                :value="option"
+              >{{ option }}</option>
             </select>
           </label>
           <span>Lane {{ index + 1 }}</span>
@@ -228,12 +266,20 @@ const start = () => {
       </template>
     </div>
 
-    <p v-if="hasDuplicateKeys" class="setup-error">
+    <p
+      v-if="hasDuplicateKeys"
+      class="setup-error"
+    >
       Each rhythm lane needs a unique key.
     </p>
 
     <footer class="setup-actions">
-      <button type="button" class="start-button" :disabled="hasDuplicateKeys" @click="start">
+      <button
+        type="button"
+        class="start-button"
+        :disabled="hasDuplicateKeys"
+        @click="start"
+      >
         Start
       </button>
     </footer>

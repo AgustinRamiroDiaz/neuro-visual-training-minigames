@@ -47,7 +47,7 @@ export function loadPlayHistory(): PlayHistoryRecord[] {
   }
 
   try {
-    const parsed = JSON.parse(rawHistory);
+    const parsed: unknown = JSON.parse(rawHistory);
 
     if (!Array.isArray(parsed)) {
       return [];

@@ -40,32 +40,63 @@ const formatMetadataValue = (value: PlayMetadataValue): string => {
   <section class="history-view">
     <header class="catalog-header">
       <div>
-        <p class="eyebrow">Session History</p>
+        <p class="eyebrow">
+          Session History
+        </p>
         <h1>Review completed playthroughs.</h1>
       </div>
-      <RouterLink class="back-button" to="/">Catalog</RouterLink>
+      <RouterLink
+        class="back-button"
+        to="/"
+      >
+        Catalog
+      </RouterLink>
     </header>
 
-    <section v-if="historyStore.records.length > 0" class="history-list" aria-label="Play history">
-      <article v-for="record in historyStore.records" :key="record.id" class="history-record">
+    <section
+      v-if="historyStore.records.length > 0"
+      class="history-list"
+      aria-label="Play history"
+    >
+      <article
+        v-for="record in historyStore.records"
+        :key="record.id"
+        class="history-record"
+      >
         <div>
-          <p class="card-meta">{{ formatTimestamp(record.timestamp) }}</p>
+          <p class="card-meta">
+            {{ formatTimestamp(record.timestamp) }}
+          </p>
           <h2>{{ record.gameName }}</h2>
           <span>{{ record.gameId }}</span>
         </div>
 
-        <dl v-if="getMetadataEntries(record).length > 0" class="history-metadata">
-          <template v-for="[key, value] in getMetadataEntries(record)" :key="key">
+        <dl
+          v-if="getMetadataEntries(record).length > 0"
+          class="history-metadata"
+        >
+          <template
+            v-for="[key, value] in getMetadataEntries(record)"
+            :key="key"
+          >
             <dt>{{ formatMetadataLabel(key) }}</dt>
             <dd>{{ formatMetadataValue(value) }}</dd>
           </template>
         </dl>
 
-        <p v-else class="history-empty-metadata">No session metrics recorded.</p>
+        <p
+          v-else
+          class="history-empty-metadata"
+        >
+          No session metrics recorded.
+        </p>
       </article>
     </section>
 
-    <p v-else class="empty-state">
+    <p
+      v-else
+      class="empty-state"
+    >
       Complete a minigame to add your first history record.
     </p>
   </section>

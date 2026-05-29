@@ -19,7 +19,7 @@ const gameSettings = computed(() =>
 );
 
 const returnToCatalog = () => {
-  router.push({ name: 'catalog' });
+  void router.push({ name: 'catalog' });
 };
 
 const handleGameFinished = (payload: GameFinishedPayload) => {
@@ -32,11 +32,22 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
 </script>
 
 <template>
-  <section v-if="minigame && gameSettings" class="play-view">
+  <section
+    v-if="minigame && gameSettings"
+    class="play-view"
+  >
     <header class="play-header">
-      <button type="button" class="back-button" @click="returnToCatalog">Back</button>
+      <button
+        type="button"
+        class="back-button"
+        @click="returnToCatalog"
+      >
+        Back
+      </button>
       <div>
-        <p class="eyebrow">{{ minigame.skillArea }}</p>
+        <p class="eyebrow">
+          {{ minigame.skillArea }}
+        </p>
         <h1>{{ minigame.title }}</h1>
       </div>
     </header>
@@ -49,11 +60,22 @@ const handleGameFinished = (payload: GameFinishedPayload) => {
     />
   </section>
 
-  <section v-else class="setup-view">
+  <section
+    v-else
+    class="setup-view"
+  >
     <header class="play-header">
-      <button type="button" class="back-button" @click="returnToCatalog">Catalog</button>
+      <button
+        type="button"
+        class="back-button"
+        @click="returnToCatalog"
+      >
+        Catalog
+      </button>
       <div>
-        <p class="eyebrow">Missing Minigame</p>
+        <p class="eyebrow">
+          Missing Minigame
+        </p>
         <h1>That drill is not available.</h1>
       </div>
     </header>

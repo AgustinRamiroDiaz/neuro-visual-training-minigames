@@ -139,13 +139,13 @@ function loadStoredAccount() {
   }
 
   try {
-    const account = JSON.parse(rawAccount);
+    const account: unknown = JSON.parse(rawAccount);
 
     if (!account || typeof account !== 'object' || typeof account.id !== 'string') {
       return null;
     }
 
-    return account as CloudUser;
+    return isCloudUser(account) ? account : null;
   } catch {
     return null;
   }
@@ -157,4 +157,19 @@ function saveStoredAccount(account: CloudUser) {
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Cloud sync failed';
+}
+
+function isCloudUser(value: unknown): value is CloudUser {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const user = value as Partial<CloudUser>;
+
+  return (
+    typeof user.id === 'string' &&
+    typeof user.username === 'string' &&
+    (user.display_name === null || typeof user.display_name === 'string') &&
+    typeof user.created_at === 'string'
+  );
 }

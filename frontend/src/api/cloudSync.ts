@@ -82,25 +82,32 @@ export async function getCloudSync(userId: string) {
 }
 
 async function request<T>(path: string, options: RequestInit = {}) {
+  const headers = new Headers(options.headers);
+  headers.set('Content-Type', 'application/json');
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
-    const message =
-      errorBody && typeof errorBody.error === 'string'
-        ? errorBody.error
-        : `Request failed with ${response.status}`;
+    const errorBody: unknown = await response.json().catch(() => null);
+    const message = getErrorMessage(errorBody) ?? `Request failed with ${response.status}`;
 
     throw new Error(message);
   }
 
   return response.json() as Promise<T>;
+}
+
+function getErrorMessage(value: unknown) {
+  if (!value || typeof value !== 'object' || !('error' in value)) {
+    return null;
+  }
+
+  const error = value.error;
+
+  return typeof error === 'string' ? error : null;
 }
 
 function mapCloudHistoryRecord(record: CloudHistoryRecord): PlayHistoryRecord {

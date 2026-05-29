@@ -16,7 +16,7 @@ const initialSettings = computed(() =>
 );
 
 const returnToCatalog = () => {
-  router.push({ name: 'catalog' });
+  void router.push({ name: 'catalog' });
 };
 
 const startGame = (settings: GameSettings) => {
@@ -25,16 +25,27 @@ const startGame = (settings: GameSettings) => {
   }
 
   settingsStore.saveSettings(minigame.value.id, settings);
-  router.push({ name: 'game-play', params: { gameId: minigame.value.id } });
+  void router.push({ name: 'game-play', params: { gameId: minigame.value.id } });
 };
 </script>
 
 <template>
-  <section v-if="minigame && initialSettings" class="setup-view">
+  <section
+    v-if="minigame && initialSettings"
+    class="setup-view"
+  >
     <header class="play-header">
-      <button type="button" class="back-button" @click="returnToCatalog">Back</button>
+      <button
+        type="button"
+        class="back-button"
+        @click="returnToCatalog"
+      >
+        Back
+      </button>
       <div>
-        <p class="eyebrow">{{ minigame.skillArea }}</p>
+        <p class="eyebrow">
+          {{ minigame.skillArea }}
+        </p>
         <h1>{{ minigame.title }}</h1>
       </div>
     </header>
@@ -47,11 +58,22 @@ const startGame = (settings: GameSettings) => {
     />
   </section>
 
-  <section v-else class="setup-view">
+  <section
+    v-else
+    class="setup-view"
+  >
     <header class="play-header">
-      <button type="button" class="back-button" @click="returnToCatalog">Catalog</button>
+      <button
+        type="button"
+        class="back-button"
+        @click="returnToCatalog"
+      >
+        Catalog
+      </button>
       <div>
-        <p class="eyebrow">Missing Minigame</p>
+        <p class="eyebrow">
+          Missing Minigame
+        </p>
         <h1>That drill is not available.</h1>
       </div>
     </header>

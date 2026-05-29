@@ -26,7 +26,11 @@ const formatLastPlayed = (timestamp: string) => {
 </script>
 
 <template>
-  <button class="game-card" type="button" @click="$emit('select', minigame)">
+  <button
+    class="game-card"
+    type="button"
+    @click="$emit('select', minigame)"
+  >
     <PreviewMark :minigame="minigame" />
     <span class="card-meta">{{ minigame.skillArea }} / {{ minigame.duration }}</span>
     <strong>{{ minigame.title }}</strong>

@@ -66,7 +66,10 @@ const start = () => {
 </script>
 
 <template>
-  <section class="setup-panel" aria-label="Dual Lane Drive setup">
+  <section
+    class="setup-panel"
+    aria-label="Dual Lane Drive setup"
+  >
     <div class="setup-row">
       <div>
         <h2>Car controls</h2>
@@ -74,10 +77,16 @@ const start = () => {
       </div>
     </div>
 
-    <section class="preset-panel" aria-label="Control presets">
+    <section
+      class="preset-panel"
+      aria-label="Control presets"
+    >
       <div class="preset-column">
         <span>Presets</span>
-        <div class="preset-group" aria-label="Dual lane presets">
+        <div
+          class="preset-group"
+          aria-label="Dual lane presets"
+        >
           <button
             v-for="preset in presets"
             :key="preset.label"
@@ -89,11 +98,22 @@ const start = () => {
         </div>
       </div>
 
-      <div v-if="userPresets.length > 0" class="preset-column" aria-label="Saved presets">
+      <div
+        v-if="userPresets.length > 0"
+        class="preset-column"
+        aria-label="Saved presets"
+      >
         <span>Saved</span>
         <div class="saved-preset-list">
-          <div v-for="preset in userPresets" :key="preset.id" class="saved-preset">
-            <button type="button" @click="applyPreset(preset.value)">
+          <div
+            v-for="preset in userPresets"
+            :key="preset.id"
+            class="saved-preset"
+          >
+            <button
+              type="button"
+              @click="applyPreset(preset.value)"
+            >
               {{ preset.name }}
             </button>
             <button
@@ -111,7 +131,11 @@ const start = () => {
       <label class="preset-save-field">
         <span>Save current</span>
         <span class="preset-save-control">
-          <input v-model="presetName" type="text" placeholder="Preset name" />
+          <input
+            v-model="presetName"
+            type="text"
+            placeholder="Preset name"
+          >
           <button
             type="button"
             class="secondary-button"
@@ -128,24 +152,40 @@ const start = () => {
       <label>
         <span>Left car</span>
         <select v-model="leftKey">
-          <option v-for="key in keyOptions" :key="key" :value="key">{{ key }}</option>
+          <option
+            v-for="key in keyOptions"
+            :key="key"
+            :value="key"
+          >{{ key }}</option>
         </select>
       </label>
 
       <label>
         <span>Right car</span>
         <select v-model="rightKey">
-          <option v-for="key in keyOptions" :key="key" :value="key">{{ key }}</option>
+          <option
+            v-for="key in keyOptions"
+            :key="key"
+            :value="key"
+          >{{ key }}</option>
         </select>
       </label>
     </div>
 
-    <p v-if="hasDuplicateKeys" class="setup-error">
+    <p
+      v-if="hasDuplicateKeys"
+      class="setup-error"
+    >
       Choose two different keys.
     </p>
 
     <footer class="setup-actions">
-      <button type="button" class="start-button" :disabled="hasDuplicateKeys" @click="start">
+      <button
+        type="button"
+        class="start-button"
+        :disabled="hasDuplicateKeys"
+        @click="start"
+      >
         Start
       </button>
     </footer>

@@ -51,7 +51,7 @@ function loadStoredSettings(): SettingsByGameId {
   }
 
   try {
-    const parsed = JSON.parse(rawSettings);
+    const parsed: unknown = JSON.parse(rawSettings);
 
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
       return {};

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 import type { Minigame } from '../data/minigames';
 import { EventBus } from '../game/EventBus';
@@ -54,5 +54,8 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="gameContainer" class="phaser-game" />
+  <div
+    ref="gameContainer"
+    class="phaser-game"
+  />
 </template>

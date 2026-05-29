@@ -2,7 +2,7 @@ import { onMounted, ref } from 'vue';
 import { presetStore, type UserPreset } from './presetStore';
 
 export function useStoredPresets<TValue>(namespace: string) {
-  const presets = ref<Array<UserPreset<TValue>>>([]);
+  const presets = ref<UserPreset<TValue>[]>([]);
 
   const loadPresets = async () => {
     presets.value = await presetStore.list<TValue>(namespace);
@@ -22,7 +22,9 @@ export function useStoredPresets<TValue>(namespace: string) {
     await loadPresets();
   };
 
-  onMounted(loadPresets);
+  onMounted(() => {
+    void loadPresets();
+  });
 
   return {
     presets,

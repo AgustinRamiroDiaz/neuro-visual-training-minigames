@@ -7,6 +7,7 @@ Vue + Phaser frontend for short visual and neuro skill training minigames, plus 
 ```bash
 pnpm --dir frontend install
 pnpm --dir frontend run dev
+pnpm --dir frontend run lint
 pnpm --dir frontend run build
 ```
 
@@ -25,6 +26,8 @@ Services:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000/api
 - Postgres: localhost:5432
+
+The Compose frontend and backend services run in development mode with bind mounts. Vite hot reloads frontend changes, and the backend uses `cargo-watch` to restart Rocket when Rust source changes.
 
 ## Backend
 

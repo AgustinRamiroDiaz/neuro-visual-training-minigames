@@ -7,7 +7,7 @@ export interface UserPreset<TValue> {
 }
 
 export interface PresetStore {
-  list<TValue>(namespace: string): Promise<Array<UserPreset<TValue>>>;
+  list<TValue>(namespace: string): Promise<UserPreset<TValue>[]>;
   save<TValue>(namespace: string, name: string, value: TValue): Promise<UserPreset<TValue>>;
   delete(namespace: string, presetId: string): Promise<void>;
 }
@@ -23,11 +23,11 @@ const createPresetId = () => {
 };
 
 export class LocalStoragePresetStore implements PresetStore {
-  async list<TValue>(namespace: string) {
-    return this.read<TValue>(namespace);
+  list<TValue>(namespace: string) {
+    return Promise.resolve(this.read<TValue>(namespace));
   }
 
-  async save<TValue>(namespace: string, name: string, value: TValue) {
+  save<TValue>(namespace: string, name: string, value: TValue) {
     const presets = this.read<TValue>(namespace);
     const now = new Date().toISOString();
     const existingPreset = presets.find(
@@ -52,15 +52,16 @@ export class LocalStoragePresetStore implements PresetStore {
     presets.push(preset);
     this.write(namespace, presets);
 
-    return preset;
+    return Promise.resolve(preset);
   }
 
-  async delete(namespace: string, presetId: string) {
+  delete(namespace: string, presetId: string) {
     const presets = this.read(namespace).filter((preset) => preset.id !== presetId);
     this.write(namespace, presets);
+    return Promise.resolve();
   }
 
-  private read<TValue>(namespace: string): Array<UserPreset<TValue>> {
+  private read<TValue>(namespace: string): UserPreset<TValue>[] {
     try {
       const rawValue = window.localStorage.getItem(`${storagePrefix}${namespace}`);
 
@@ -68,13 +69,13 @@ export class LocalStoragePresetStore implements PresetStore {
         return [];
       }
 
-      return JSON.parse(rawValue) as Array<UserPreset<TValue>>;
+      return JSON.parse(rawValue) as UserPreset<TValue>[];
     } catch {
       return [];
     }
   }
 
-  private write<TValue>(namespace: string, presets: Array<UserPreset<TValue>>) {
+  private write<TValue>(namespace: string, presets: UserPreset<TValue>[]) {
     window.localStorage.setItem(`${storagePrefix}${namespace}`, JSON.stringify(presets));
   }
 }
