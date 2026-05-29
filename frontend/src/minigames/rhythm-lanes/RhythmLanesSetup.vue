@@ -135,7 +135,7 @@ const start = () => {
     >
       <div class="preset-column">
         <span>Presets</span>
-        <div
+        <ButtonGroup
           class="preset-group"
           aria-label="Built-in rhythm lane presets"
         >
@@ -147,7 +147,7 @@ const start = () => {
             outlined
             @click="applyPreset(preset)"
           />
-        </div>
+        </ButtonGroup>
       </div>
 
       <div
@@ -157,7 +157,7 @@ const start = () => {
       >
         <span>Saved</span>
         <div class="saved-preset-list">
-          <div
+          <ButtonGroup
             v-for="preset in userPresets"
             :key="preset.id"
             class="saved-preset"
@@ -176,13 +176,13 @@ const start = () => {
               :aria-label="`Delete ${preset.name}`"
               @click="deletePreset(preset.id)"
             />
-          </div>
+          </ButtonGroup>
         </div>
       </div>
 
       <label class="preset-save-field">
         <span>Save current</span>
-        <span class="preset-save-control">
+        <InputGroup class="preset-save-control">
           <InputText
             v-model="presetName"
             type="text"
@@ -195,7 +195,7 @@ const start = () => {
             :disabled="hasDuplicateKeys || !presetName.trim()"
             @click="saveCurrentPreset"
           />
-        </span>
+        </InputGroup>
       </label>
     </section>
 
@@ -263,12 +263,15 @@ const start = () => {
       </template>
     </div>
 
-    <p
+    <Message
       v-if="hasDuplicateKeys"
       class="setup-error"
+      severity="error"
+      size="small"
+      icon="none"
     >
       Each rhythm lane needs a unique key.
-    </p>
+    </Message>
 
     <footer class="setup-actions">
       <Button

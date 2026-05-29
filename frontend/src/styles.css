@@ -149,7 +149,6 @@ body {
 .cloud-checking,
 .cloud-unavailable {
   margin: 0;
-  position: relative;
   text-align: center;
   width: 100%;
 }
@@ -167,35 +166,6 @@ body {
   color: #725a16;
   cursor: help;
   font-weight: 900;
-}
-
-.cloud-unavailable::after {
-  background: #20232a;
-  border-radius: 8px;
-  bottom: calc(100% + 10px);
-  color: #ffffff;
-  content: attr(title);
-  font-size: 0.78rem;
-  font-weight: 700;
-  left: 0;
-  line-height: 1.45;
-  opacity: 0;
-  padding: 10px 12px;
-  pointer-events: none;
-  position: absolute;
-  text-align: left;
-  transform: translateY(4px);
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease;
-  width: min(260px, 78vw);
-  z-index: 30;
-}
-
-.cloud-unavailable:hover::after,
-.cloud-unavailable:focus-visible::after {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .play-view {
@@ -735,10 +705,10 @@ body {
 }
 
 .preset-group {
-  display: flex;
+  align-items: center;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .preset-panel {
@@ -771,18 +741,11 @@ body {
 }
 
 .saved-preset {
-  align-items: center;
   background: #f6f3ee;
-  border: 1px solid #d8dce3;
-  border-radius: 999px;
-  display: inline-flex;
-  overflow: hidden;
 }
 
 .saved-preset-delete {
-  border-left: 1px solid #d8dce3 !important;
   font-weight: 900;
-  padding: 0 10px !important;
 }
 
 .field-grid,
@@ -902,9 +865,7 @@ body {
 }
 
 .setup-error {
-  color: #b42335;
-  font-weight: 700;
-  margin: 0;
+  justify-self: start;
 }
 
 .setup-actions {
@@ -923,9 +884,7 @@ body {
 }
 
 .preset-save-control {
-  align-items: center;
-  display: flex;
-  gap: 8px;
+  width: 100%;
 }
 
 .phaser-game {
@@ -1027,9 +986,7 @@ body {
   }
 
   .preset-save-control {
-    align-items: stretch;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
   }
 }
 
@@ -1072,12 +1029,20 @@ body {
 
   .lane-builder {
     align-items: stretch;
-    display: grid;
-    grid-template-columns: 34px 1fr 34px;
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 8px 0 12px;
   }
 
   .lane-tile {
-    width: 100%;
+    flex: 0 0 min(214px, 68vw);
+    width: min(214px, 68vw);
+  }
+
+  .lane-add-button {
+    flex: 0 0 34px;
   }
 
   .setup-panel {

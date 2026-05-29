@@ -140,11 +140,11 @@ function applySyncedState(preferences: CloudPreferences, history: typeof history
         Accounts are currently username-based for cloud save development.
       </p>
 
-      <fieldset
+      <Fieldset
         v-if="hasLocalState"
+        legend="Local progress found"
         class="auth-choice"
       >
-        <legend>Local progress found</legend>
         <p>
           This browser has {{ localStateSummary }}. Keep a private anonymous copy on this device and
           choose what happens for this account.
@@ -167,7 +167,7 @@ function applySyncedState(preferences: CloudPreferences, history: typeof history
           />
           <span>{{ skipLocalStateLabel }}</span>
         </label>
-      </fieldset>
+      </Fieldset>
 
       <Message
         v-if="accountStore.syncError"

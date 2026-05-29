@@ -82,7 +82,11 @@ onBeforeUnmount(() => {
       aria-label="Account"
     >
       <template v-if="accountStore.user">
-        <span class="account-name">{{ accountStore.user.username }}</span>
+        <Tag
+          class="account-name"
+          :value="accountStore.user.username"
+          severity="contrast"
+        />
         <Badge
           class="sync-indicator"
           :class="syncClass"
@@ -128,12 +132,12 @@ onBeforeUnmount(() => {
 
       <Message
         v-else
+        v-tooltip.top="'Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames.'"
         class="cloud-unavailable"
         severity="warn"
         size="small"
         icon="none"
         tabindex="0"
-        title="Cloud save requires the Rocket backend. This client-only app still works locally. To host the backend, see github.com/AgustinRamiroDiaz/neuro-visual-training-minigames."
       >
         Cloud unavailable
       </Message>
