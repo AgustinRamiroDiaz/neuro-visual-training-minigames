@@ -28,9 +28,14 @@ button {
 }
 
 .app-shell {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
   min-height: 100%;
-  padding: 76px 40px 40px;
-  position: relative;
+}
+
+.app-content {
+  min-width: 0;
+  padding: 40px;
 }
 
 .catalog-view,
@@ -42,21 +47,61 @@ button {
   max-width: 1180px;
 }
 
+.app-sidebar {
+  align-content: start;
+  background: #ebe7df;
+  border-right: 1px solid #d8d2c8;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100svh;
+  padding: 26px 18px;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-brand {
+  color: #20232a;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 28px;
+  text-decoration: none;
+}
+
+.sidebar-nav,
 .account-nav {
-  align-items: center;
-  background: rgba(246, 243, 238, 0.88);
-  border: 1px solid rgba(216, 220, 227, 0.72);
-  border-radius: 999px;
-  box-shadow: 0 10px 28px rgba(32, 35, 42, 0.1);
-  backdrop-filter: blur(12px);
-  display: flex;
+  display: grid;
   gap: 8px;
-  justify-content: flex-end;
-  padding: 6px;
-  position: fixed;
-  right: 24px;
-  top: 18px;
-  z-index: 20;
+}
+
+.sidebar-nav {
+  align-self: start;
+}
+
+.account-nav {
+  align-self: end;
+  border-top: 1px solid #d8d2c8;
+  padding-top: 16px;
+}
+
+.sidebar-link {
+  align-items: center;
+  border-radius: 8px;
+  color: #3b414d;
+  display: flex;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 0 12px;
+  text-decoration: none;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link.router-link-active {
+  background: #ffffff;
+  color: #20232a;
 }
 
 .account-name,
@@ -64,10 +109,11 @@ button {
 .account-primary,
 .sync-indicator {
   align-items: center;
-  border-radius: 999px;
+  border-radius: 8px;
   display: inline-flex;
   font-size: 0.86rem;
   gap: 7px;
+  justify-content: center;
   min-height: 36px;
   padding: 0 12px;
 }
@@ -83,6 +129,7 @@ button {
   background: #ffffff;
   border: 1px solid #d8dce3;
   color: #3b414d;
+  width: 100%;
   text-decoration: none;
 }
 
@@ -1023,7 +1070,40 @@ select {
 
 @media (max-width: 920px) {
   .app-shell {
-    padding: 82px 24px 24px;
+    grid-template-columns: 1fr;
+  }
+
+  .app-content {
+    padding: 24px;
+  }
+
+  .app-sidebar {
+    border-bottom: 1px solid #d8d2c8;
+    border-right: 0;
+    gap: 12px;
+    grid-template-columns: minmax(140px, auto) minmax(0, 1fr) auto;
+    grid-template-rows: auto;
+    min-height: auto;
+    padding: 14px 24px;
+    position: sticky;
+    z-index: 20;
+  }
+
+  .sidebar-brand {
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .account-nav {
+    align-self: center;
+    border-top: 0;
+    display: flex;
+    padding-top: 0;
   }
 
   .play-view {
@@ -1084,16 +1164,23 @@ select {
 }
 
 @media (max-width: 560px) {
-  .app-shell {
-    padding: 86px 18px 18px;
+  .app-content {
+    padding: 18px;
   }
 
-  .account-nav {
+  .app-sidebar {
     align-items: stretch;
-    left: 18px;
-    overflow-x: auto;
-    right: 18px;
-    top: 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-nav,
+  .account-nav {
+    justify-content: stretch;
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .account-name {

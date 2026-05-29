@@ -45,12 +45,6 @@ const formatMetadataValue = (value: PlayMetadataValue): string => {
         </p>
         <h1>Review completed playthroughs.</h1>
       </div>
-      <RouterLink
-        class="back-button"
-        to="/"
-      >
-        Catalog
-      </RouterLink>
     </header>
 
     <section

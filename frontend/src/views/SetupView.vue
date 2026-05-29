@@ -15,10 +15,6 @@ const initialSettings = computed(() =>
   minigame.value ? settingsStore.getSettingsForGame(minigame.value) : null,
 );
 
-const returnToCatalog = () => {
-  void router.push({ name: 'catalog' });
-};
-
 const startGame = (settings: GameSettings) => {
   if (!minigame.value) {
     return;
@@ -35,13 +31,6 @@ const startGame = (settings: GameSettings) => {
     class="setup-view"
   >
     <header class="play-header">
-      <button
-        type="button"
-        class="back-button"
-        @click="returnToCatalog"
-      >
-        Back
-      </button>
       <div>
         <p class="eyebrow">
           {{ minigame.skillArea }}
@@ -63,13 +52,6 @@ const startGame = (settings: GameSettings) => {
     class="setup-view"
   >
     <header class="play-header">
-      <button
-        type="button"
-        class="back-button"
-        @click="returnToCatalog"
-      >
-        Catalog
-      </button>
       <div>
         <p class="eyebrow">
           Missing Minigame

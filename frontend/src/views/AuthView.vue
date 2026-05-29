@@ -105,12 +105,6 @@ function applySyncedState(preferences: CloudPreferences, history: typeof history
 <template>
   <section class="auth-view">
     <header class="play-header">
-      <RouterLink
-        class="back-button"
-        to="/"
-      >
-        Catalog
-      </RouterLink>
       <div>
         <p class="eyebrow">
           Cloud Save

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountNav from './components/AccountNav.vue';
+import AppSidebar from './components/AppSidebar.vue';
 import { useCloudSync } from './sync/useCloudSync';
 
 useCloudSync({ start: true });
@@ -7,7 +7,9 @@ useCloudSync({ start: true });
 
 <template>
   <main class="app-shell">
-    <AccountNav />
-    <RouterView />
+    <AppSidebar />
+    <section class="app-content">
+      <RouterView />
+    </section>
   </main>
 </template>

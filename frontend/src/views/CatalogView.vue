@@ -44,12 +44,6 @@ const configureGame = (game: MinigameDefinition) => {
           Search the catalog, filter by skill area, then launch a Phaser-powered
           minigame session.
         </p>
-        <RouterLink
-          class="back-button"
-          to="/history"
-        >
-          History {{ historyStore.count }}
-        </RouterLink>
       </div>
     </header>
 

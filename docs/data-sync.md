@@ -33,7 +33,7 @@ The frontend keeps shared state in Pinia stores:
 - `frontend/src/sync/useCloudSync.ts`
   - Owns background sync lifecycle work: local state watches, debounce timing, online/offline events, and cloud/local merging.
   - Mounted once from `frontend/src/App.vue`.
-  - Exposes sync display state and logout cleanup behavior for `AccountNav.vue`.
+  - Exposes sync display state and logout cleanup behavior for `AppSidebar.vue`.
 
 The active app always reads and writes the normal history/settings local storage keys while the user plays. The anonymous profile is kept in separate backup keys:
 
