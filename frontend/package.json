@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --max-warnings=0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "cypress run"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -21,6 +22,7 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^6.0.7",
+    "cypress": "^15.16.0",
     "eslint": "^10.4.0",
     "eslint-plugin-vue": "^10.9.1",
     "globals": "^17.6.0",

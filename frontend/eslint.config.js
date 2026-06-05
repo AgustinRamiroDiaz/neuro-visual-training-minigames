@@ -6,7 +6,14 @@ import vueParser from 'vue-eslint-parser';
 
 export default tseslint.config(
   {
-    ignores: ['.vite/**', 'dist/**', 'eslint.config.js', 'node_modules/**', 'vite.config.ts'],
+    ignores: [
+      '.vite/**',
+      'cypress/e2e/**/*.js',
+      'dist/**',
+      'eslint.config.js',
+      'node_modules/**',
+      'vite.config.ts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -54,6 +61,19 @@ export default tseslint.config(
       'vue/multi-word-component-names': 'off',
       'vue/no-v-html': 'error',
       'vue/require-default-prop': 'off',
+    },
+  },
+  {
+    files: ['cypress/**/*.ts', 'cypress.config.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.cypress,
+        ...globals.es2021,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-namespace': 'off',
     },
   },
 );
